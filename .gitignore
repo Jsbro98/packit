@@ -39,3 +39,9 @@ build/
 # OS
 .DS_Store
 Thumbs.db
+
+# frontend
+frontend/node_modules/
+frontend/dist/
+src/main/resources/static/*
+!src/main/resources/static/.gitkeep
