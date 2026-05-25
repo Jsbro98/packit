@@ -11,26 +11,35 @@ Describe the bug clearly.
 
 ## Expected behavior
 
-What should have happened?
+What should have happened instead?
 
 ## Steps to reproduce
 
-we'll discuss what this looks like
+Clear, deterministic steps to reproduce the issue:
 
-1. Step one
-2. Step two
-3. Step three
+1.
+2.
+3.
+
+## Severity
+
+- [ ] Low (minor UI issue)
+- [ ] Medium (feature partially broken)
+- [ ] High (core functionality broken)
+- [ ] Critical (app unusable / crash)
 
 ## Environment
 
 - OS:
 - Java version:
-- Browser (if relevant):
+- Node/Vite version (if relevant):
+- Browser:
+- WebSocket/Network context (if relevant):
 
 ## Logs / Screenshots
 
-Paste logs or screenshots if useful.
+Paste logs, stack traces, or screenshots here.
 
 ## Notes
 
-Anything else relevant.
+Any additional context.
