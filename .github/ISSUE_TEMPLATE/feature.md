@@ -19,11 +19,18 @@ High-level implementation idea.
 
 ## Acceptance Criteria
 
-we'll discuss what this looks like
+Minimum conditions for this feature to be considered complete:
 
-- [ ] Task 1
-- [ ] Task 2
-- [ ] Tests added if needed
+- [ ] Core functionality works as intended
+- [ ] No breaking changes to existing features
+- [ ] Basic tests added if applicable
+
+## Open Questions
+
+Things that still need to be decided during implementation:
+
+- Question 1
+- Question 2
 
 ## Notes
 
