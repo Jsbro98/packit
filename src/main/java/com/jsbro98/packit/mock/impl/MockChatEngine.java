@@ -6,10 +6,11 @@ import com.jsbro98.packit.mock.model.Message;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class MockChatEngine implements ChatEngine {
-  private final ArrayList<MessageListener> listeners;
+  private final List<MessageListener> listeners;
 
   MockChatEngine() {
     listeners = new ArrayList<>();
