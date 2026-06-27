@@ -1,17 +1,26 @@
 package com.jsbro98.packit.controller;
 
+import com.jsbro98.packit.mock.api.ChatEngine;
 import com.jsbro98.packit.mock.model.Message;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.util.HtmlUtils;
 
 @Controller
 public class ChatController {
+  private final ChatEngine chatEngine;
+  private final SimpMessagingTemplate messagingTemplate;
 
-  @MessageMapping("/chat-session")
-  @SendTo("/topic/chat")
-  public String chatSession(Message message) throws Exception {
-    return HtmlUtils.htmlEscape(message.message());
+  public ChatController(ChatEngine chatEngine, SimpMessagingTemplate messagingTemplate) {
+    this.chatEngine = chatEngine;
+    this.messagingTemplate = messagingTemplate;
+    // only listener for now is serializing and sending to the topic
+    chatEngine.registerListener(msg ->
+            messagingTemplate.convertAndSend("/topic/messages", msg));
+  }
+
+  @MessageMapping("/send")
+  public void handleMessage(Message message) {
+    chatEngine.sendMessage(message);
   }
 }
