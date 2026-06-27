@@ -13,7 +13,10 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
   @Override
   public void registerStompEndpoints(StompEndpointRegistry registry) {
-    registry.addEndpoint("/ws");
+    // TODO: remove allowing all origins. lock it down
+    // setAllowedOrigins is needed for current vite build
+    // vite uses a proxy server from (8080) => (5173)
+    registry.addEndpoint("/ws").setAllowedOrigins("*");
   }
 
   @Override
