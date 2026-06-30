@@ -9,10 +9,14 @@
 <body>
 <div id="app">
     <form class="main-form">
+        <label for="username">Username</label>
+        <input id="username" name="username" placeholder="username" type="text"/>
         <label for="user-textbox" id="user-textbox-label">Message</label>
         <input id="user-textbox" name="user-text" type="text">
         <button id="send-button" type="submit">Send</button>
     </form>
+    <br>
+    <div class="chat-box"></div>
 </div>
 <script src="/src/main.ts" type="module"></script>
 </body>

@@ -3,14 +3,13 @@ package com.jsbro98.packit.mock.impl;
 import com.jsbro98.packit.mock.api.ChatEngine;
 import com.jsbro98.packit.mock.api.MessageListener;
 import com.jsbro98.packit.mock.model.Message;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Component
-@Profile("dev")
+// @Profile("dev") enable when implementation is made
 public class MockChatEngine implements ChatEngine {
   private final List<MessageListener> listeners;
 

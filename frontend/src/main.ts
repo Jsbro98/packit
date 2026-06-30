@@ -1,4 +1,5 @@
 import {Client} from "@stomp/stompjs";
+import './style.css';
 
 const client = new Client();
 
@@ -6,19 +7,33 @@ const client = new Client();
 client.brokerURL = '/ws';
 
 const inputTextBox = document.querySelector('#user-textbox');
+const usernameInput = document.querySelector('#username');
 const submitButton = document.querySelector('#send-button');
+const chatBox = document.querySelector('.chat-box');
 
+// main listener for sending messages to the server
 submitButton.addEventListener('click', (e) => {
     e.preventDefault();
+    const sender = usernameInput.value.trim();
+    const text = inputTextBox.value.trim();
+    if (!sender || !text) return; // you need a user & message to publish
     client.publish({
         destination: "/app/send",
-        body: JSON.stringify({'message': inputTextBox.value})
+        body: JSON.stringify({
+            sender: sender,
+            message: text,
+        })
     })
+    inputTextBox.value = ''; // clear the input for the next message
 })
 
+
+// connection logic for listening to the server
 client.onConnect = (frame) => {
     client.subscribe('/topic/messages', (message) => {
-        document.body.append(JSON.parse(message.body).message);
+        const messageRecord = JSON.parse(message.body);
+        chatBox.textContent += "Sender: " + messageRecord.sender + '\n';
+        chatBox.textContent += "Message: " + messageRecord.message + '\n\n';
     });
 }
 
