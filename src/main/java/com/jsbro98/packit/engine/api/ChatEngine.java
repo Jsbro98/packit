@@ -1,6 +1,6 @@
-package com.jsbro98.packit.mock.api;
+package com.jsbro98.packit.engine.api;
 
-import com.jsbro98.packit.mock.model.Message;
+import com.jsbro98.packit.model.Message;
 
 public interface ChatEngine {
   void sendMessage(Message message);
