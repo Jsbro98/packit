@@ -15,6 +15,6 @@ export default defineConfig({
             }
         },
 
-        // allowedHosts: [],
+        // allowedHosts: ["yadira-weakhanded-phonogrammically.ngrok-free.dev"],
     }
 })

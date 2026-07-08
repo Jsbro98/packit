@@ -1,7 +1,7 @@
 package com.jsbro98.packit.controller;
 
-import com.jsbro98.packit.mock.api.ChatEngine;
-import com.jsbro98.packit.mock.model.Message;
+import com.jsbro98.packit.engine.api.ChatEngine;
+import com.jsbro98.packit.model.Message;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;

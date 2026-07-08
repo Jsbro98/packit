@@ -30,9 +30,11 @@ submitButton.addEventListener('click', (e) => {
 
 // connection logic for listening to the server
 client.onConnect = (frame) => {
+    // TODO: add a way for this to fetch message history
+
     client.subscribe('/topic/messages', (message) => {
         const messageRecord = JSON.parse(message.body);
-        chatBox.textContent += "Sender: " + messageRecord.sender + '\n';
+        chatBox.textContent += "User: " + messageRecord.sender + '\n';
         chatBox.textContent += "Message: " + messageRecord.message + '\n\n';
     });
 }
