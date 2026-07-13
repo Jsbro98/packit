@@ -1,0 +1,42 @@
+package com.jsbro98.packit.store;
+
+import com.jsbro98.packit.model.Message;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+class InMemoryMessageStoreTest {
+
+  private InMemoryMessageStore store;
+
+  @BeforeEach
+  void setUp_InMemoryMessageStore() {
+    store = new InMemoryMessageStore();
+  }
+
+  @Test
+  void shouldSaveMessages_whenGivenMessages() {
+    fillMessages(store);
+
+    assertThat(store.getMessages()).hasSize(10);
+    assertThat(store.getMessages().getFirst().message()).isEqualTo("0");
+    assertThat(store.getMessages().getLast().message()).isEqualTo("9");
+  }
+
+  @Test
+  void getMessages_shouldReturnAValidListOfMessages() {
+    fillMessages(store);
+    List<Message> messages = store.getMessages();
+    assertThat(messages).isNotNull().isNotEmpty();
+    assertThat(messages).hasSize(10);
+  }
+
+  private void fillMessages(InMemoryMessageStore store) {
+    for (int i = 0; i < 10; i++) {
+      store.saveMessage(new Message("Testing", String.valueOf(i)));
+    }
+  }
+}
