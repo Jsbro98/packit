@@ -1,6 +1,7 @@
-package com.jsbro98.packit.store;
+package com.jsbro98.packit.unit.store;
 
 import com.jsbro98.packit.model.Message;
+import com.jsbro98.packit.store.InMemoryMessageStore;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
