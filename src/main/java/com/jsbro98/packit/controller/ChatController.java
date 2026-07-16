@@ -1,26 +1,20 @@
 package com.jsbro98.packit.controller;
 
-import com.jsbro98.packit.engine.api.ChatEngine;
 import com.jsbro98.packit.model.Message;
+import com.jsbro98.packit.service.ChatService;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 @Controller
 public class ChatController {
-  private final ChatEngine chatEngine;
-  private final SimpMessagingTemplate messagingTemplate;
+  private final ChatService chatService;
 
-  public ChatController(ChatEngine chatEngine, SimpMessagingTemplate messagingTemplate) {
-    this.chatEngine = chatEngine;
-    this.messagingTemplate = messagingTemplate;
-    // only listener for now is serializing and sending to the topic
-    chatEngine.registerListener(msg ->
-            messagingTemplate.convertAndSend("/topic/messages", msg));
+  public ChatController(ChatService chatService) {
+    this.chatService = chatService;
   }
 
   @MessageMapping("/send")
   public void handleMessage(Message message) {
-    chatEngine.sendMessage(message);
+    chatService.processMessage(message);
   }
 }
