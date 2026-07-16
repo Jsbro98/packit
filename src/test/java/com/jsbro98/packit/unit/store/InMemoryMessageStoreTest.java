@@ -21,10 +21,11 @@ class InMemoryMessageStoreTest {
   @Test
   void shouldSaveMessages_whenGivenMessages() {
     fillMessages(store);
+    List<Message> messages = store.getMessages();
 
-    assertThat(store.getMessages()).hasSize(10);
-    assertThat(store.getMessages().getFirst().message()).isEqualTo("0");
-    assertThat(store.getMessages().getLast().message()).isEqualTo("9");
+    assertThat(messages).hasSize(10);
+    assertThat(messages.getFirst().message()).isEqualTo("0");
+    assertThat(messages.getLast().message()).isEqualTo("9");
   }
 
   @Test
