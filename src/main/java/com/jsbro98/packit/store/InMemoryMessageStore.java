@@ -34,8 +34,6 @@ public class InMemoryMessageStore implements MessageStore {
       return Collections.emptyList();
     }
 
-    var history = new ArrayList<>(messages);
-    Collections.reverse(history);
-    return history;
+    return new ArrayList<>(messages);
   }
 }
