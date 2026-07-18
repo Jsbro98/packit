@@ -1,11 +1,23 @@
 import {Client} from "@stomp/stompjs";
 import './style.css';
 
+// ---------- Types ----------
+
+interface Message {
+    sender: string;
+    message: string;
+}
+
+// ---------------------------
+
+
+
 const client = new Client();
 
 // using '/ws/' for now to allow ngrok
 client.brokerURL = '/ws';
 
+// TODO: add null checking here for robustness
 const inputTextBox = document.querySelector('#user-textbox');
 const usernameInput = document.querySelector('#username');
 const submitButton = document.querySelector('#send-button');
@@ -29,13 +41,15 @@ submitButton.addEventListener('click', (e) => {
 
 
 // connection logic for listening to the server
-client.onConnect = (frame) => {
-    // TODO: add a way for this to fetch message history
+client.onConnect = async (frame) => {
+    const messageHistory: Message[] = await getMessageHistory();
+    for (const message of messageHistory) {
+        displayMessage(message);
+    }
 
     client.subscribe('/topic/messages', (message) => {
-        const messageRecord = JSON.parse(message.body);
-        chatBox.textContent += "User: " + messageRecord.sender + '\n';
-        chatBox.textContent += "Message: " + messageRecord.message + '\n\n';
+        const messageRecord: Message = JSON.parse(message.body);
+        displayMessage(messageRecord);
     });
 }
 
@@ -52,3 +66,21 @@ client.onWebSocketClose = (event) => {
 }
 
 client.activate();
+
+
+// ---------- functions ----------
+
+async function getMessageHistory(): Promise<Message[]> {
+    const response = await fetch("/api/history");
+
+    if (!response.ok) {
+        throw new Error(`Failed to fetch history: ${response.status}`);
+    }
+
+    return await response.json();
+}
+
+function displayMessage(message: Message) {
+    chatBox.textContent += "User: " + message.sender + '\n';
+    chatBox.textContent += "Message: " + message.message + '\n\n';
+}
