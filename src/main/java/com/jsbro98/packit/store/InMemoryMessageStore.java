@@ -18,7 +18,7 @@ public class InMemoryMessageStore implements MessageStore {
   private final ConcurrentLinkedDeque<Message> messages = new ConcurrentLinkedDeque<>();
 
   @Override
-  public void saveMessage(Message message) {
+  public synchronized void saveMessage(Message message) {
     messages.addLast(message);
 
     if (counter.incrementAndGet() > MAX_MESSAGES) {
