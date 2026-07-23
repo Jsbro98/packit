@@ -1,4 +1,30 @@
+:root {
+    --text-area-background: rgb(255 255 255 / 0.42);
+    --placeholder: rgb(0 0 0 / 0.55);
+}
+
+html,
+body {
+    margin: 0;
+    min-height: 100%;
+}
+
+body {
+    min-height: 100vh;
+    background: url("assets/background.svg") center/cover no-repeat;
+}
+
 /* ----- Form Styling ----- */
+
+::placeholder {
+    color: var(--placeholder);
+    opacity: 1;
+}
+
+::-ms-input-placeholder {
+    color: var(--placeholder);
+}
+
 .main-form {
     padding: .50em;
     display: grid;
@@ -18,24 +44,62 @@
 }
 
 #username {
-    max-width: 25%;
+    max-width: 15%;
+    background: var(--text-area-background);
 }
 
 #send-button {
+    border: none;
     border-radius: .75em;
-    background: black;
+    background: #126989;
     color: white;
     padding: .50em;
+    cursor: pointer;
+
+    box-shadow: 0 4px 8px rgba(0, 0, 0, .2);
+
+    transition: background-color 0.2s ease,
+    transform 0.1s ease,
+    box-shadow 0.1s ease;
+}
+
+#send-button:hover {
+    background: #1783ab;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, .25);
+}
+
+#send-button:active {
+    background: #0f556f;
+    transform: translateY(2px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .2);
+}
+
+#user-textbox {
+    background: var(--text-area-background);
 }
 
 /* ----- Chat box styling ----- */
 
+/* hack to render newline characters */
 .chat-box {
     white-space: pre-line;
 }
 
 .chat-box {
-    border-top: groove 1em #ccc;
+    border-top: groove 1em #126786;
     border-radius: 10px;
     padding: 1em;
+}
+
+.chat-message {
+    margin-bottom: 1.5em;
+    border-bottom: solid 1px rgb(204 204 204 / 0.16);
+}
+
+.chat-message > div {
+    font-weight: bold;
+}
+
+.chat-message > * {
+    color: lightgray;
 }
