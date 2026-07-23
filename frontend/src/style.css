@@ -1,3 +1,32 @@
 .chat-box {
     white-space: pre-line;
 }
+
+.main-form {
+    padding: .50em;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.5em;
+}
+
+.main-form > label {
+    background: rgb(204 204 204 / 0.41);
+    padding: .50em;
+    border: solid 1px #ccc;
+    border-radius: .75em;
+    font-style: italic;
+    max-width: fit-content;
+    max-height: fit-content;
+    align-self: center;
+}
+
+#username {
+    max-width: 25%;
+}
+
+#send-button {
+    border-radius: .75em;
+    background: black;
+    color: white;
+    padding: .50em;
+}
