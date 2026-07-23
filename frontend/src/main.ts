@@ -17,11 +17,17 @@ const client = new Client();
 // using '/ws/' for now to allow ngrok
 client.brokerURL = '/ws';
 
-// TODO: add null checking here for robustness
-const inputTextBox = document.querySelector('#user-textbox');
-const usernameInput = document.querySelector('#username');
-const submitButton = document.querySelector('#send-button');
-const chatBox = document.querySelector('.chat-box');
+const inputTextBox = requireElement<HTMLInputElement>('#user-textbox');
+const usernameInput = requireElement<HTMLInputElement>('#username');
+const submitButton = requireElement<HTMLButtonElement>('#send-button');
+const chatBox = requireElement<HTMLDivElement>('.chat-box');
+
+const chatMessageStream = {
+    append(message: Message) {
+        const messageNode = createChatMessageNode(message);
+        chatBox.appendChild(messageNode);
+    },
+}
 
 // main listener for sending messages to the server
 submitButton.addEventListener('click', (e) => {
@@ -44,12 +50,12 @@ submitButton.addEventListener('click', (e) => {
 client.onConnect = async (frame) => {
     const messageHistory: Message[] = await getMessageHistory();
     for (const message of messageHistory) {
-        displayMessage(message);
+        chatMessageStream.append(message);
     }
 
     client.subscribe('/topic/messages', (message) => {
         const messageRecord: Message = JSON.parse(message.body);
-        displayMessage(messageRecord);
+        chatMessageStream.append(messageRecord);
     });
 }
 
@@ -80,7 +86,27 @@ async function getMessageHistory(): Promise<Message[]> {
     return await response.json();
 }
 
-function displayMessage(message: Message) {
-    chatBox.textContent += "User: " + message.sender + '\n';
-    chatBox.textContent += "Message: " + message.message + '\n\n';
+
+function createChatMessageNode(message: Message): HTMLDivElement {
+    const result: HTMLDivElement = document.createElement("div");
+    result.classList.add("chat-message");
+
+    const username: HTMLDivElement = document.createElement("div");
+    username.textContent = `From: ${message.sender}`;
+
+    const messageBody: HTMLParagraphElement = document.createElement("p");
+    messageBody.textContent = `${message.message}`;
+
+    result.appendChild(username);
+    result.appendChild(messageBody);
+
+    return result;
+}
+
+function requireElement<T extends HTMLElement>(selector: string): T {
+    const element = document.querySelector<T>(selector);
+    if (!element) {
+        throw new Error(`Required DOM element non-existent: "${selector}"`);
+    }
+    return element;
 }
