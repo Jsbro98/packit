@@ -1,7 +1,4 @@
-.chat-box {
-    white-space: pre-line;
-}
-
+/* ----- Form Styling ----- */
 .main-form {
     padding: .50em;
     display: grid;
@@ -29,4 +26,16 @@
     background: black;
     color: white;
     padding: .50em;
+}
+
+/* ----- Chat box styling ----- */
+
+.chat-box {
+    white-space: pre-line;
+}
+
+.chat-box {
+    border-top: groove 1em #ccc;
+    border-radius: 10px;
+    padding: 1em;
 }
