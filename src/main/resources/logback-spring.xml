@@ -1,16 +1,8 @@
 <configuration>
 
-    <!-- JSON encoder for structured logs -->
     <appender name="JSON" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
     </appender>
-
-    <!-- lowering framework logs -->
-    <logger name="org.springframework" level="INFO"/>
-    <logger name="org.hibernate" level="WARN"/>
-
-    <!-- app logs -->
-    <logger name="com.jsbro98.packit" level="DEBUG"/>
 
     <root level="INFO">
         <appender-ref ref="JSON"/>
