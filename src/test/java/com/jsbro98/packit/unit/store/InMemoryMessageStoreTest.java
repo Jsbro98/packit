@@ -32,8 +32,10 @@ class InMemoryMessageStoreTest {
   void getMessages_shouldReturnAValidListOfMessages() {
     fillMessages(store);
     List<Message> messages = store.getMessages();
-    assertThat(messages).isNotNull().isNotEmpty();
-    assertThat(messages).hasSize(10);
+    assertThat(messages)
+            .isNotNull()
+            .isNotEmpty()
+            .hasSize(10);
   }
 
   private void fillMessages(InMemoryMessageStore store) {
