@@ -53,6 +53,15 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Source: https://mvnrepository.com/artifact/net.logstash.logback/logstash-logback-encoder -->
+        <!-- Logstash encoder for JSON app logs on disk  -->
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+            <version>9.0</version>
+            <scope>compile</scope>
+        </dependency>
+
     </dependencies>
 
     <build>

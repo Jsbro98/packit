@@ -48,3 +48,6 @@ src/main/resources/static/*
 
 # application.properties (for now)
 application.properties
+
+# log files
+logs
