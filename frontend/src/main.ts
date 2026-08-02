@@ -1,11 +1,11 @@
-import { Client } from "@stomp/stompjs";
+import {Client} from "@stomp/stompjs";
 import "./style.css";
 
 // ---------- Types ----------
 
 interface Message {
   sender: string;
-  message: string;
+  content: string;
 }
 
 // ---------------------------
@@ -37,7 +37,7 @@ submitButton.addEventListener("click", (e) => {
     destination: "/app/send",
     body: JSON.stringify({
       sender: sender,
-      message: text,
+      content: text,
     }),
   });
   inputTextBox.value = ""; // clear the input for the next message
@@ -90,7 +90,7 @@ function createChatMessageNode(message: Message): HTMLDivElement {
   username.textContent = `From: ${message.sender}`;
 
   const messageBody: HTMLParagraphElement = document.createElement("p");
-  messageBody.textContent = `${message.message}`;
+  messageBody.textContent = `${message.content}`;
 
   result.appendChild(username);
   result.appendChild(messageBody);
