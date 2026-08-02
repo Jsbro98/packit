@@ -1,4 +1,4 @@
-package com.jsbro98.packit.unit.store;
+package com.jsbro98.packit.unit;
 
 import com.jsbro98.packit.model.Message;
 import com.jsbro98.packit.store.InMemoryMessageStore;
@@ -24,8 +24,8 @@ class InMemoryMessageStoreTest {
     List<Message> messages = store.getMessages();
 
     assertThat(messages).hasSize(10);
-    assertThat(messages.getFirst().message()).isEqualTo("0");
-    assertThat(messages.getLast().message()).isEqualTo("9");
+    assertThat(messages.getFirst().content()).isEqualTo("0");
+    assertThat(messages.getLast().content()).isEqualTo("9");
   }
 
   @Test

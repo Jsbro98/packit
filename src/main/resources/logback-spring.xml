@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
     <variable name="LOG_DIR" value="${user.dir}/logs"/>
@@ -5,7 +6,9 @@
     <!-- console logs -->
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <pattern>%d{HH:mm:ss.SSS} %-5level [%thread] %logger{36} - %msg %mdc%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-5level) [%cyan(%thread)] %magenta(%logger{36}) -
+                %msg%X%n
+            </pattern>
         </encoder>
     </appender>
 
@@ -24,7 +27,12 @@
     </appender>
 
     <!-- application log level -->
-    <logger name="com.jsbro98.packit" level="INFO"/>
+    <springProfile name="dev">
+        <logger name="com.jsbro98.packit" level="DEBUG"/>
+    </springProfile>
+    <springProfile name="!dev">
+        <logger name="com.jsbro98.packit" level="INFO"/>
+    </springProfile>
 
     <root level="INFO">
         <appender-ref ref="STDOUT"/>

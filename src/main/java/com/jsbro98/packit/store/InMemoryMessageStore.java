@@ -1,6 +1,8 @@
 package com.jsbro98.packit.store;
 
 import com.jsbro98.packit.model.Message;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -12,6 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Component
 public class InMemoryMessageStore implements MessageStore {
   private static final int MAX_MESSAGES = 50;
+  private static final Logger LOGGER = LoggerFactory.getLogger(InMemoryMessageStore.class);
 
   // counter is needed as ConcurrentLinkedDeque is not O(1) for getting the size
   private final AtomicInteger counter = new AtomicInteger(0);
@@ -19,6 +22,7 @@ public class InMemoryMessageStore implements MessageStore {
 
   @Override
   public synchronized void saveMessage(Message message) {
+    LOGGER.debug("Saving a message: {}", message);
     messages.addLast(message);
 
     if (counter.incrementAndGet() > MAX_MESSAGES) {
