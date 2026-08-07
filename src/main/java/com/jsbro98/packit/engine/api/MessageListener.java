@@ -1,8 +1,8 @@
 package com.jsbro98.packit.engine.api;
 
-import com.jsbro98.packit.model.Message;
+import com.jsbro98.packit.model.ChatMessage;
 
 @FunctionalInterface
 public interface MessageListener {
-  void onMessage(Message message);
+  void onMessage(ChatMessage message);
 }

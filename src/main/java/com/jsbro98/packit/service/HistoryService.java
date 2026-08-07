@@ -1,6 +1,6 @@
 package com.jsbro98.packit.service;
 
-import com.jsbro98.packit.model.Message;
+import com.jsbro98.packit.model.ChatMessage;
 import com.jsbro98.packit.store.MessageStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +19,7 @@ public class HistoryService {
   }
 
 
-  public List<Message> getMessageData() {
+  public List<ChatMessage> getMessageData() {
     LOGGER.debug("Retrieving messages");
     return messageHistory.getMessages();
   }

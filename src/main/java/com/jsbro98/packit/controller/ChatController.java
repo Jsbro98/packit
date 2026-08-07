@@ -1,6 +1,6 @@
 package com.jsbro98.packit.controller;
 
-import com.jsbro98.packit.model.Message;
+import com.jsbro98.packit.model.SendMessageRequest;
 import com.jsbro98.packit.service.ChatService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,8 +18,8 @@ public class ChatController {
   }
 
   @MessageMapping("/send")
-  public void handleMessage(Message message) {
-    LOGGER.debug("Received message: {}", message);
-    chatService.processMessage(message);
+  public void handleMessage(SendMessageRequest sendMessageRequest) {
+    LOGGER.debug("Received message: {}", sendMessageRequest);
+    chatService.processMessage(sendMessageRequest);
   }
 }

@@ -1,6 +1,6 @@
 package com.jsbro98.packit.store;
 
-import com.jsbro98.packit.model.Message;
+import com.jsbro98.packit.model.ChatMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -18,10 +18,10 @@ public class InMemoryMessageStore implements MessageStore {
 
   // counter is needed as ConcurrentLinkedDeque is not O(1) for getting the size
   private final AtomicInteger counter = new AtomicInteger(0);
-  private final ConcurrentLinkedDeque<Message> messages = new ConcurrentLinkedDeque<>();
+  private final ConcurrentLinkedDeque<ChatMessage> messages = new ConcurrentLinkedDeque<>();
 
   @Override
-  public synchronized void saveMessage(Message message) {
+  public synchronized void saveMessage(ChatMessage message) {
     LOGGER.debug("Saving a message: {}", message);
     messages.addLast(message);
 
@@ -32,7 +32,7 @@ public class InMemoryMessageStore implements MessageStore {
   }
 
   @Override
-  public List<Message> getMessages() {
+  public List<ChatMessage> getMessages() {
     // avoiding returning null here
     if (messages.isEmpty()) {
       return Collections.emptyList();

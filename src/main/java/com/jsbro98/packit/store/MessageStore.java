@@ -1,11 +1,11 @@
 package com.jsbro98.packit.store;
 
-import com.jsbro98.packit.model.Message;
+import com.jsbro98.packit.model.ChatMessage;
 
 import java.util.List;
 
 public interface MessageStore {
-  void saveMessage(Message message);
+  void saveMessage(ChatMessage message);
 
-  List<Message> getMessages();
+  List<ChatMessage> getMessages();
 }

@@ -2,7 +2,7 @@ package com.jsbro98.packit.engine.impl;
 
 import com.jsbro98.packit.engine.api.ChatEngine;
 import com.jsbro98.packit.engine.api.MessageListener;
-import com.jsbro98.packit.model.Message;
+import com.jsbro98.packit.model.ChatMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -22,7 +22,7 @@ public class SimpleChatEngine implements ChatEngine {
   }
 
   @Override
-  public void sendMessage(Message message) {
+  public void sendMessage(ChatMessage message) {
     LOGGER.debug("Sending message: {}", message);
     for (MessageListener listener : listeners) {
       listener.onMessage(message);

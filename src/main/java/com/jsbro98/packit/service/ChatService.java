@@ -1,7 +1,8 @@
 package com.jsbro98.packit.service;
 
 import com.jsbro98.packit.engine.api.ChatEngine;
-import com.jsbro98.packit.model.Message;
+import com.jsbro98.packit.model.ChatMessage;
+import com.jsbro98.packit.model.SendMessageRequest;
 import com.jsbro98.packit.store.MessageStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,10 +27,11 @@ public class ChatService {
     initializeListeners();
   }
 
-  public void processMessage(Message message) {
-    LOGGER.debug("Processing a message: {}", message);
-    messageStore.saveMessage(message);
-    chatEngine.sendMessage(message);
+  public void processMessage(SendMessageRequest sendMessageRequest) {
+    LOGGER.debug("Processing a message: {}", sendMessageRequest);
+    var chatMessage = ChatMessage.create(sendMessageRequest);
+    messageStore.saveMessage(chatMessage);
+    chatEngine.sendMessage(chatMessage);
   }
 
   private void initializeListeners() {

@@ -1,6 +1,6 @@
 package com.jsbro98.packit.controller;
 
-import com.jsbro98.packit.model.Message;
+import com.jsbro98.packit.model.ChatMessage;
 import com.jsbro98.packit.service.HistoryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +22,7 @@ public class MessageHistoryController {
   }
 
   @GetMapping("/history")
-  public List<Message> getHistory() {
+  public List<ChatMessage> getHistory() {
     LOGGER.debug("Getting history from service");
     return historyService.getMessageData();
   }
