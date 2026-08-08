@@ -27,13 +27,32 @@ public class ChatService {
     initializeListeners();
   }
 
-  public void processMessage(SendMessageRequest sendMessageRequest) {
-    LOGGER.debug("Processing a message: {}", sendMessageRequest);
-    var chatMessage = ChatMessage.create(sendMessageRequest);
-    messageStore.saveMessage(chatMessage);
-    chatEngine.sendMessage(chatMessage);
+  public void processMessage(SendMessageRequest request) {
+    validate(request);
+    LOGGER.debug("Processing a message: {}", request);
+    var chatMessage = ChatMessage.create(request);
+    attemptSendAndSave(chatMessage);
   }
 
+  private void validate(SendMessageRequest request) {
+    if (request.sender() == null || request.sender().isBlank()
+            || request.content() == null || request.content().isBlank()) {
+      throw new IllegalArgumentException("sender and content must not be blank");
+    }
+  }
+
+  private void attemptSendAndSave(ChatMessage message) {
+    if (chatEngine.sendMessage(message)) {
+      LOGGER.debug("Message {} sent successfully", message.id());
+
+      // intentionally unguarded, DB will throw
+      messageStore.saveMessage(message);
+    } else {
+      LOGGER.error("Broadcast failed for message {}; skipping persistence", message.id());
+    }
+  }
+
+  // TODO: possibly move this to ChatEngine
   private void initializeListeners() {
     // only listener for now is serializing and re-sending to frontend's "/topic"
     chatEngine.registerListener(msg ->
