@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
 
+// TODO: create controller advice for this class
 @Controller
 public class ChatController {
   private static final Logger LOGGER = LoggerFactory.getLogger(ChatController.class);
