@@ -22,11 +22,17 @@ public class SimpleChatEngine implements ChatEngine {
   }
 
   @Override
-  public void sendMessage(ChatMessage message) {
+  public boolean sendMessage(ChatMessage message) {
     LOGGER.debug("Sending message: {}", message);
     for (MessageListener listener : listeners) {
-      listener.onMessage(message);
+      try {
+        listener.onMessage(message);
+      } catch (Exception e) {
+        LOGGER.error("Listener failed for message {}: {}", message.id(), e.getMessage(), e);
+        return false;
+      }
     }
+    return true;
   }
 
   @Override
