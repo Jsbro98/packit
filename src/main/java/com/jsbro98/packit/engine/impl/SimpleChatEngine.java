@@ -17,12 +17,17 @@ public class SimpleChatEngine implements ChatEngine {
 
   private final List<MessageListener> listeners;
 
-  SimpleChatEngine() {
+  public SimpleChatEngine() {
     listeners = new ArrayList<>();
   }
 
   @Override
   public boolean sendMessage(ChatMessage message) {
+    if (ChatMessage.isMessageInvalid(message)) {
+      LOGGER.warn("Invalid message received: {}", message);
+      return false;
+    }
+
     LOGGER.debug("Sending message: {}", message);
     for (MessageListener listener : listeners) {
       try {
@@ -37,7 +42,13 @@ public class SimpleChatEngine implements ChatEngine {
 
   @Override
   public void registerListener(MessageListener listener) {
+    if (listener == null) {
+      LOGGER.error("Listener is null");
+      throw new IllegalArgumentException("listener cannot be null");
+    }
+
     if (listeners.contains(listener)) {
+      LOGGER.warn("Listener is already registered: {}", listener);
       return;
     }
 
