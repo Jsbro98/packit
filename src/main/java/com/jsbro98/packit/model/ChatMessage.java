@@ -18,4 +18,12 @@ public record ChatMessage(UUID id, Instant timestamp, String sender, String cont
     LOGGER.debug("Creating ChatMessage with message: {}", sendMessageRequest);
     return new ChatMessage(UUID.randomUUID(), Instant.now(), sendMessageRequest.sender(), sendMessageRequest.content());
   }
+
+  public static boolean isMessageInvalid(ChatMessage message) {
+    return message == null ||
+            message.content() == null ||
+            message.content().isBlank() ||
+            message.sender() == null ||
+            message.sender().isBlank();
+  }
 }
