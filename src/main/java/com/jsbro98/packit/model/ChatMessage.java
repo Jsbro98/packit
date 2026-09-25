@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import java.time.Instant;
 import java.util.UUID;
 
-public record ChatMessage(UUID id, Instant timestamp, String sender, String content) {
+public record ChatMessage(UUID id, Instant timestamp, String sender, String content) implements ChatPayload {
   private static final Logger LOGGER = LoggerFactory.getLogger(ChatMessage.class);
 
   public static ChatMessage create(String sender, String content) {
@@ -17,13 +17,5 @@ public record ChatMessage(UUID id, Instant timestamp, String sender, String cont
   public static ChatMessage create(SendMessageRequest sendMessageRequest) {
     LOGGER.debug("Creating ChatMessage with message: {}", sendMessageRequest);
     return new ChatMessage(UUID.randomUUID(), Instant.now(), sendMessageRequest.sender(), sendMessageRequest.content());
-  }
-
-  public static boolean isMessageInvalid(ChatMessage message) {
-    return message == null ||
-            message.content() == null ||
-            message.content().isBlank() ||
-            message.sender() == null ||
-            message.sender().isBlank();
   }
 }
