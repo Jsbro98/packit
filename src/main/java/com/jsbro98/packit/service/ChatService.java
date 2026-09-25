@@ -2,6 +2,7 @@ package com.jsbro98.packit.service;
 
 import com.jsbro98.packit.engine.api.ChatEngine;
 import com.jsbro98.packit.model.ChatMessage;
+import com.jsbro98.packit.model.ChatPayload;
 import com.jsbro98.packit.model.SendMessageRequest;
 import com.jsbro98.packit.store.MessageStore;
 import org.slf4j.Logger;
@@ -31,7 +32,7 @@ public class ChatService {
     LOGGER.debug("Validating incoming request: {}", request);
 
     // this just returns instead of throwing because invalid requests from users are expected
-    if (SendMessageRequest.isMessageRequestInvalid(request)) {
+    if (ChatPayload.isInvalid(request)) {
       LOGGER.warn("Invalid message request was received: {}", request);
       return;
     }
