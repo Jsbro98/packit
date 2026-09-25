@@ -2,6 +2,7 @@ package com.jsbro98.packit.unit;
 
 import com.jsbro98.packit.engine.api.MessageListener;
 import com.jsbro98.packit.engine.impl.SimpleChatEngine;
+import com.jsbro98.packit.errors.ListenerFailedException;
 import com.jsbro98.packit.model.ChatMessage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class SimpleChatEngineTest {
   private SimpleChatEngine chatEngine;
+  private boolean listenerFiredFlag = false;
 
   private static Stream<ChatMessage> invalidMessages() {
     return Stream.of(
@@ -29,26 +31,28 @@ class SimpleChatEngineTest {
   @BeforeEach
   void setUp() {
     chatEngine = new SimpleChatEngine();
+    chatEngine.registerListener(message -> listenerFiredFlag = true);
+    listenerFiredFlag = false;
   }
 
   @Test
   void sendMessage_shouldReturnTrue_WhenGivenAValidMessage() {
     ChatMessage message = new ChatMessage(UUID.randomUUID(), Instant.now(), "Bob", "Testing...");
 
-    boolean result = chatEngine.sendMessage(message);
+    chatEngine.sendMessage(message);
 
-    assertTrue(result);
+    assertTrue(listenerFiredFlag);
   }
 
   @ParameterizedTest
   @MethodSource("invalidMessages")
-  void sendMessage_shouldReturnFalse_WhenGivenInvalidMessage(ChatMessage message) {
-    assertFalse(chatEngine.sendMessage(message));
+  void sendMessage_shouldThrow_WhenGivenInvalidMessage(ChatMessage message) {
+    assertThrows(IllegalArgumentException.class, () -> chatEngine.sendMessage(message));
   }
 
   @Test
-  void sendMessage_shouldReturnFalse_WhenMessageIsNull() {
-    assertFalse(chatEngine.sendMessage(null));
+  void sendMessage_shouldThrow_WhenMessageIsNull() {
+    assertThrows(IllegalArgumentException.class, () -> chatEngine.sendMessage(null));
   }
 
   @Test
@@ -59,5 +63,17 @@ class SimpleChatEngineTest {
             IllegalArgumentException.class,
             () -> chatEngine.registerListener(listener));
     assertEquals("listener cannot be null", ex.getMessage());
+  }
+
+  @Test
+  void sendMessage_shouldThrow_whenABadListenerIsRegistered() {
+    MessageListener listener = (message) -> {
+      throw new RuntimeException("BOOM!");
+    };
+    ChatMessage message = new ChatMessage(UUID.randomUUID(), Instant.now(), "Bob", "Testing...");
+
+    chatEngine.registerListener(listener);
+
+    assertThrows(ListenerFailedException.class, () -> chatEngine.sendMessage(message));
   }
 }
