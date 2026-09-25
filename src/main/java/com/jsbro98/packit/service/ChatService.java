@@ -30,25 +30,24 @@ public class ChatService {
   public void processMessage(SendMessageRequest request) {
     LOGGER.debug("Validating incoming request: {}", request);
 
+    // this just returns instead of throwing because invalid requests from users are expected
     if (SendMessageRequest.isMessageRequestInvalid(request)) {
-      LOGGER.error("Invalid message request was received: {}", request);
-      throw new IllegalArgumentException(String.format("Invalid request: %s", request));
+      LOGGER.warn("Invalid message request was received: {}", request);
+      return;
     }
 
     LOGGER.debug("Processing a message: {}", request);
     var chatMessage = ChatMessage.create(request);
+    LOGGER.debug("Transformed request into a message: {}", chatMessage);
     attemptSendAndSave(chatMessage);
   }
 
   private void attemptSendAndSave(ChatMessage message) {
-    if (chatEngine.sendMessage(message)) {
-      LOGGER.debug("Message {} sent successfully", message.id());
+    chatEngine.sendMessage(message);
+    LOGGER.debug("Message {} sent successfully", message.id());
 
-      // intentionally unguarded, DB will throw
-      messageStore.saveMessage(message);
-    } else {
-      LOGGER.error("Broadcast failed for message {}; skipping persistence", message.id());
-    }
+    // intentionally unguarded, DB will throw
+    messageStore.saveMessage(message);
   }
 
   /*
