@@ -20,7 +20,7 @@ class InMemoryMessageStoreTest {
 
   @Test
   void shouldSaveMessages_whenGivenMessages() {
-    fillMessages(store);
+    fillMessages(store, 10);
     List<ChatMessage> sendMessageRequests = store.getMessages();
 
     assertThat(sendMessageRequests).hasSize(10);
@@ -30,7 +30,7 @@ class InMemoryMessageStoreTest {
 
   @Test
   void getMessages_shouldReturnAValidListOfMessages() {
-    fillMessages(store);
+    fillMessages(store, 10);
     List<ChatMessage> sendMessageRequests = store.getMessages();
     assertThat(sendMessageRequests)
             .isNotNull()
@@ -38,8 +38,17 @@ class InMemoryMessageStoreTest {
             .hasSize(10);
   }
 
-  private void fillMessages(InMemoryMessageStore store) {
-    for (int i = 0; i < 10; i++) {
+  @Test
+  void savedMessages_shouldNeverGoOverMaxMessageLimit() {
+    fillMessages(store, 100);
+    List<ChatMessage> sendMessageRequests = store.getMessages();
+
+    assertThat(sendMessageRequests.size())
+            .isEqualTo(store.getMaxMessageLimit());
+  }
+
+  private void fillMessages(InMemoryMessageStore store, int amount) {
+    for (int i = 0; i < amount; i++) {
       store.saveMessage(ChatMessage.create("Testing", String.valueOf(i)));
     }
   }
