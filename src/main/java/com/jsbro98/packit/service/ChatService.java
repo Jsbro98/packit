@@ -28,17 +28,16 @@ public class ChatService {
   }
 
   public void processMessage(SendMessageRequest request) {
-    validate(request);
+    LOGGER.debug("Validating incoming request: {}", request);
+
+    if (SendMessageRequest.isMessageRequestInvalid(request)) {
+      LOGGER.error("Invalid message request was received: {}", request);
+      throw new IllegalArgumentException(String.format("Invalid request: %s", request));
+    }
+
     LOGGER.debug("Processing a message: {}", request);
     var chatMessage = ChatMessage.create(request);
     attemptSendAndSave(chatMessage);
-  }
-
-  private void validate(SendMessageRequest request) {
-    if (request.sender() == null || request.sender().isBlank()
-            || request.content() == null || request.content().isBlank()) {
-      throw new IllegalArgumentException("sender and content must not be blank");
-    }
   }
 
   private void attemptSendAndSave(ChatMessage message) {
