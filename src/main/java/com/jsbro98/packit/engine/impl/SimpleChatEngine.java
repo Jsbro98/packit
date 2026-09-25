@@ -2,6 +2,7 @@ package com.jsbro98.packit.engine.impl;
 
 import com.jsbro98.packit.engine.api.ChatEngine;
 import com.jsbro98.packit.engine.api.MessageListener;
+import com.jsbro98.packit.errors.ListenerFailedException;
 import com.jsbro98.packit.model.ChatMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,10 +23,10 @@ public class SimpleChatEngine implements ChatEngine {
   }
 
   @Override
-  public boolean sendMessage(ChatMessage message) {
+  public void sendMessage(ChatMessage message) {
     if (ChatMessage.isMessageInvalid(message)) {
-      LOGGER.warn("Invalid message received: {}", message);
-      return false;
+      LOGGER.error("Message {} is invalid", message);
+      throw new IllegalArgumentException("Message is invalid");
     }
 
     LOGGER.debug("Sending message: {}", message);
@@ -34,10 +35,9 @@ public class SimpleChatEngine implements ChatEngine {
         listener.onMessage(message);
       } catch (Exception e) {
         LOGGER.error("Listener failed for message {}: {}", message.id(), e.getMessage(), e);
-        return false;
+        throw new ListenerFailedException("Listener failed for message " + message.id(), e);
       }
     }
-    return true;
   }
 
   @Override
