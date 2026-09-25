@@ -6,6 +6,5 @@ import java.util.List;
 
 public interface MessageStore {
   void saveMessage(ChatMessage message);
-
   List<ChatMessage> getMessages();
 }
