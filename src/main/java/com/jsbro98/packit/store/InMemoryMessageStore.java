@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
-public class InMemoryMessageStore implements MessageStore {
+public class InMemoryMessageStore implements LimitingMessageStore {
   private static final int MAX_MESSAGES = 50;
   private static final Logger LOGGER = LoggerFactory.getLogger(InMemoryMessageStore.class);
 
@@ -22,6 +22,11 @@ public class InMemoryMessageStore implements MessageStore {
 
   @Override
   public synchronized void saveMessage(ChatMessage message) {
+    if (message == null) {
+      LOGGER.error("message is null");
+      throw new IllegalArgumentException("Cannot save null message");
+    }
+
     LOGGER.debug("Saving a message: {}", message);
     messages.addLast(message);
 
@@ -29,6 +34,11 @@ public class InMemoryMessageStore implements MessageStore {
       messages.pollFirst();
       counter.decrementAndGet();
     }
+  }
+
+  @Override
+  public int getMaxMessageLimit() {
+    return MAX_MESSAGES;
   }
 
   @Override
