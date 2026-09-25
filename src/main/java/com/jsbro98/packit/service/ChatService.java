@@ -52,7 +52,11 @@ public class ChatService {
     }
   }
 
-  // TODO: possibly move this to ChatEngine
+  /*
+       service registers chatEngine's listeners because the service
+       owns the connection between the chatEngine and the
+       messaging template
+  */
   private void initializeListeners() {
     // only listener for now is serializing and re-sending to frontend's "/topic"
     chatEngine.registerListener(msg ->
