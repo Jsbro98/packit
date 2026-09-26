@@ -9,18 +9,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @Component
 // @Profile("dev") enable when implementation is made
 public class SimpleChatEngine implements ChatEngine {
   private static final Logger LOGGER = LoggerFactory.getLogger(SimpleChatEngine.class);
 
-  private final List<MessageListener> listeners;
+  private final CopyOnWriteArrayList<MessageListener> listeners;
 
   public SimpleChatEngine() {
-    listeners = new ArrayList<>();
+    listeners = new CopyOnWriteArrayList<>();
   }
 
   @Override
@@ -48,11 +47,8 @@ public class SimpleChatEngine implements ChatEngine {
       throw new IllegalArgumentException("listener cannot be null");
     }
 
-    if (listeners.contains(listener)) {
+    if (!listeners.addIfAbsent(listener)) {
       LOGGER.warn("Listener is already registered: {}", listener);
-      return;
     }
-
-    listeners.add(listener);
   }
 }
