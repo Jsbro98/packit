@@ -67,7 +67,7 @@ class SimpleChatEngineTest {
 
   @Test
   void sendMessage_shouldThrow_whenABadListenerIsRegistered() {
-    MessageListener listener = (message) -> {
+    MessageListener listener = _ -> {
       throw new RuntimeException("BOOM!");
     };
     ChatMessage message = new ChatMessage(UUID.randomUUID(), Instant.now(), "Bob", "Testing...");
