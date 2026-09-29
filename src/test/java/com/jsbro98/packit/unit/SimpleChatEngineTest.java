@@ -36,7 +36,7 @@ class SimpleChatEngineTest {
   }
 
   @Test
-  void sendMessage_shouldReturnTrue_WhenGivenAValidMessage() {
+  void sendMessage_shouldReturnTrue_whenGivenAValidMessage() {
     ChatMessage message = new ChatMessage(UUID.randomUUID(), Instant.now(), "Bob", "Testing...");
 
     chatEngine.sendMessage(message);
@@ -46,17 +46,17 @@ class SimpleChatEngineTest {
 
   @ParameterizedTest
   @MethodSource("invalidMessages")
-  void sendMessage_shouldThrow_WhenGivenInvalidMessage(ChatMessage message) {
+  void sendMessage_shouldThrow_whenGivenInvalidMessage(ChatMessage message) {
     assertThrows(IllegalArgumentException.class, () -> chatEngine.sendMessage(message));
   }
 
   @Test
-  void sendMessage_shouldThrow_WhenMessageIsNull() {
+  void sendMessage_shouldThrow_whenMessageIsNull() {
     assertThrows(IllegalArgumentException.class, () -> chatEngine.sendMessage(null));
   }
 
   @Test
-  void registerListener_shouldThrow_WhenGivenANullListener() {
+  void registerListener_shouldThrow_whenGivenANullListener() {
     MessageListener listener = null;
 
     IllegalArgumentException ex = assertThrows(
