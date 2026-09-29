@@ -82,6 +82,30 @@
                 </configuration>
             </plugin>
 
+            <!-- Resolves dependency jar paths into properties like ${org.mockito:mockito-core:jar} -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>properties</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <!-- Load Mockito as a startup agent (avoids the JDK self-attach warning).
+                         If JaCoCo is added, prefix with @{argLine} -->
+                    <!--suppress UnresolvedMavenProperty -->
+                    <argLine>-javaagent:${org.mockito:mockito-core:jar}</argLine>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
 
