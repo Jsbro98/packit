@@ -43,8 +43,8 @@ class InMemoryMessageStoreTest {
     fillMessages(store, 100);
     List<ChatMessage> sendMessageRequests = store.getMessages();
 
-    assertThat(sendMessageRequests.size())
-            .isEqualTo(store.getMaxMessageLimit());
+    assertThat(sendMessageRequests)
+            .hasSize(store.getMaxMessageLimit());
   }
 
   private void fillMessages(InMemoryMessageStore store, int amount) {
