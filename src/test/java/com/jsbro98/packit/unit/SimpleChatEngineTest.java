@@ -31,7 +31,7 @@ class SimpleChatEngineTest {
   @BeforeEach
   void setUp() {
     chatEngine = new SimpleChatEngine();
-    chatEngine.registerListener(message -> listenerFiredFlag = true);
+    chatEngine.registerListener(_ -> listenerFiredFlag = true);
     listenerFiredFlag = false;
   }
 
