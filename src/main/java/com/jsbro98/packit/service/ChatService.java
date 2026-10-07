@@ -4,6 +4,7 @@ import com.jsbro98.packit.engine.api.ChatEngine;
 import com.jsbro98.packit.model.ChatMessage;
 import com.jsbro98.packit.model.SendMessageRequest;
 import com.jsbro98.packit.store.MessageStore;
+import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -17,39 +18,28 @@ public class ChatService {
   private final MessageStore messageStore;
   private final SimpMessagingTemplate messagingTemplate;
 
-  public ChatService(ChatEngine chatEngine,
-                     MessageStore messageStore,
-                     SimpMessagingTemplate messagingTemplate) {
+  public ChatService(ChatEngine chatEngine, MessageStore messageStore, SimpMessagingTemplate messagingTemplate) {
     this.chatEngine = chatEngine;
     this.messageStore = messageStore;
     this.messagingTemplate = messagingTemplate;
+  }
 
-    initializeListeners();
+  // service wires the engine's listeners to the messaging template
+  @PostConstruct
+  void initializeListeners() {
+    chatEngine.registerListener(msg -> messagingTemplate
+            .convertAndSend("/topic/messages", msg));
   }
 
   public void processMessage(SendMessageRequest request) {
-    LOGGER.debug("Processing a message: {}", request);
     var chatMessage = ChatMessage.create(request.sender(), request.content());
-    LOGGER.debug("Transformed request into a message: {}", chatMessage);
-    attemptSendAndSave(chatMessage);
+    LOGGER.debug("Created message {}", chatMessage.id());
+    saveAndSend(chatMessage);
   }
 
-  private void attemptSendAndSave(ChatMessage message) {
-    chatEngine.sendMessage(message);
-    LOGGER.debug("Message {} sent successfully", message.id());
-
-    // intentionally unguarded, DB will throw
+  private void saveAndSend(ChatMessage message) {
     messageStore.saveMessage(message);
-  }
-
-  /*
-       service registers chatEngine's listeners because the service
-       owns the connection between the chatEngine and the
-       messaging template
-  */
-  private void initializeListeners() {
-    // only listener for now is serializing and re-sending to frontend's "/topic"
-    chatEngine.registerListener(msg ->
-            messagingTemplate.convertAndSend("/topic/messages", msg));
+    chatEngine.sendMessage(message);
+    LOGGER.debug("Message {} saved and sent", message.id());
   }
 }
