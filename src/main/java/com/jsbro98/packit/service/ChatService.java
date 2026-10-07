@@ -4,7 +4,6 @@ import com.jsbro98.packit.engine.api.ChatEngine;
 import com.jsbro98.packit.model.ChatMessage;
 import com.jsbro98.packit.model.SendMessageRequest;
 import com.jsbro98.packit.store.MessageStore;
-import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -16,19 +15,18 @@ public class ChatService {
 
   private final ChatEngine chatEngine;
   private final MessageStore messageStore;
-  private final SimpMessagingTemplate messagingTemplate;
 
   public ChatService(ChatEngine chatEngine, MessageStore messageStore, SimpMessagingTemplate messagingTemplate) {
     this.chatEngine = chatEngine;
     this.messageStore = messageStore;
-    this.messagingTemplate = messagingTemplate;
+
+    registerBroadcastListener(chatEngine, messagingTemplate);
   }
 
-  // service wires the engine's listeners to the messaging template
-  @PostConstruct
-  void initializeListeners() {
-    chatEngine.registerListener(msg -> messagingTemplate
-            .convertAndSend("/topic/messages", msg));
+  // TODO: fix registering listeners here. Originally this was needed because the engine
+  //  needs to know the Messaging template, but different ChatEngines will have different MessageListeners
+  private static void registerBroadcastListener(ChatEngine engine, SimpMessagingTemplate template) {
+    engine.registerListener(msg -> template.convertAndSend("/topic/messages", msg));
   }
 
   public void processMessage(SendMessageRequest request) {
