@@ -2,6 +2,7 @@ package com.jsbro98.packit.unit;
 
 import com.jsbro98.packit.engine.api.ChatEngine;
 import com.jsbro98.packit.engine.impl.SimpleChatEngine;
+import com.jsbro98.packit.errors.InvalidMessageException;
 import com.jsbro98.packit.model.ChatMessage;
 import com.jsbro98.packit.model.SendMessageRequest;
 import com.jsbro98.packit.service.ChatService;
@@ -14,7 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -55,15 +56,12 @@ class ChatServiceTest {
     }
 
     @Test
-    void processMessage_whenChatEngineFails_shouldNotSave() {
-      var failingEngine = spy(chatEngine);
-      doThrow(new IllegalStateException()).when(failingEngine).sendMessage(any());
-      var service = new ChatService(failingEngine, store, template);
+    void processMessage_whenInvalid_shouldNotSaveOrBroadcast() {
+      assertThatThrownBy(() -> chatService.processMessage(invalidRequest()))
+              .isInstanceOf(InvalidMessageException.class);
 
-      var request = validRequest();
-      assertThrows(IllegalStateException.class, () -> service.processMessage(request));
-      verify(failingEngine).sendMessage(any());
       assertThat(store.getMessages()).isEmpty();
+      verifyNoInteractions(template);
     }
   }
 }
