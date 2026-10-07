@@ -37,11 +37,6 @@ public class InMemoryMessageStore implements LimitingMessageStore {
   }
 
   @Override
-  public int getMaxMessageLimit() {
-    return MAX_MESSAGES;
-  }
-
-  @Override
   public List<ChatMessage> getMessages() {
     // avoiding returning null here
     if (messages.isEmpty()) {
@@ -49,5 +44,10 @@ public class InMemoryMessageStore implements LimitingMessageStore {
     }
 
     return new ArrayList<>(messages);
+  }
+
+  @Override
+  public int getMaxMessageLimit() {
+    return MAX_MESSAGES;
   }
 }
