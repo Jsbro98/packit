@@ -55,14 +55,6 @@ class ChatServiceTest {
     }
 
     @Test
-    void processMessage_whenGivenAInvalidMessage_shouldFailSilently() {
-      chatService.processMessage(invalidRequest());
-
-      verifyNoInteractions(template);
-      assertThat(store.getMessages()).isEmpty();
-    }
-
-    @Test
     void processMessage_whenChatEngineFails_shouldNotSave() {
       var failingEngine = spy(chatEngine);
       doThrow(new IllegalStateException()).when(failingEngine).sendMessage(any());

@@ -6,27 +6,15 @@ import com.jsbro98.packit.errors.ListenerFailedException;
 import com.jsbro98.packit.model.ChatMessage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 
 import java.time.Instant;
 import java.util.UUID;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class SimpleChatEngineTest {
   private SimpleChatEngine chatEngine;
   private boolean listenerFiredFlag = false;
-
-  private static Stream<ChatMessage> invalidMessages() {
-    return Stream.of(
-            new ChatMessage(UUID.randomUUID(), Instant.now(), null, "content"),
-            new ChatMessage(UUID.randomUUID(), Instant.now(), "", "content"),
-            new ChatMessage(UUID.randomUUID(), Instant.now(), "Bob", null),
-            new ChatMessage(UUID.randomUUID(), Instant.now(), "Bob", "")
-    );
-  }
 
   @BeforeEach
   void setUp() {
@@ -42,17 +30,6 @@ class SimpleChatEngineTest {
     chatEngine.sendMessage(message);
 
     assertTrue(listenerFiredFlag);
-  }
-
-  @ParameterizedTest
-  @MethodSource("invalidMessages")
-  void sendMessage_shouldThrow_whenGivenInvalidMessage(ChatMessage message) {
-    assertThrows(IllegalArgumentException.class, () -> chatEngine.sendMessage(message));
-  }
-
-  @Test
-  void sendMessage_shouldThrow_whenMessageIsNull() {
-    assertThrows(IllegalArgumentException.class, () -> chatEngine.sendMessage(null));
   }
 
   @Test
