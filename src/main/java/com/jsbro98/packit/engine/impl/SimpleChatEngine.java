@@ -4,7 +4,6 @@ import com.jsbro98.packit.engine.api.ChatEngine;
 import com.jsbro98.packit.engine.api.MessageListener;
 import com.jsbro98.packit.errors.ListenerFailedException;
 import com.jsbro98.packit.model.ChatMessage;
-import com.jsbro98.packit.model.ChatPayload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -24,11 +23,6 @@ public class SimpleChatEngine implements ChatEngine {
 
   @Override
   public void sendMessage(ChatMessage message) {
-    if (ChatPayload.isInvalid(message)) {
-      LOGGER.error("Message {} is invalid", message);
-      throw new IllegalArgumentException("Message is invalid");
-    }
-
     LOGGER.debug("Sending message: {}", message);
     for (MessageListener listener : listeners) {
       try {
