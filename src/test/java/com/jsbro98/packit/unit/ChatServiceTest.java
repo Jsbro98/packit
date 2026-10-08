@@ -11,18 +11,14 @@ import com.jsbro98.packit.store.MessageStore;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 
-@SpringBootTest
 class ChatServiceTest {
-  private SimpMessagingTemplate template;
   private MessageStore store;
   private ChatEngine chatEngine;
   private ChatService chatService;
@@ -41,17 +37,19 @@ class ChatServiceTest {
   class ChatServiceSimpleInMemoryTests {
     @BeforeEach
     void setUp() {
-      template = mock(SimpMessagingTemplate.class);
       store = new InMemoryMessageStore();
       chatEngine = new SimpleChatEngine();
-      chatService = new ChatService(chatEngine, store, template);
+      chatService = new ChatService(chatEngine, store);
     }
 
     @Test
     void processMessage_whenGivenAValidMessage_shouldBroadcastAndSave() {
+      chatEngine = spy(SimpleChatEngine.class);
+      chatService = new ChatService(chatEngine, store);
+
       chatService.processMessage(validRequest());
 
-      verify(template).convertAndSend(eq("/topic/messages"), any(ChatMessage.class));
+      verify(chatEngine).sendMessage(any(ChatMessage.class));
       assertThat(store.getMessages()).hasSize(1);
     }
 
@@ -61,7 +59,6 @@ class ChatServiceTest {
               .isInstanceOf(InvalidMessageException.class);
 
       assertThat(store.getMessages()).isEmpty();
-      verifyNoInteractions(template);
     }
   }
 }
