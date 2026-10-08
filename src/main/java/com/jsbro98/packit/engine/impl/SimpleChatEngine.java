@@ -6,11 +6,10 @@ import com.jsbro98.packit.errors.ListenerFailedException;
 import com.jsbro98.packit.model.ChatMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
+import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-@Component
 // @Profile("dev") enable when implementation is made
 public class SimpleChatEngine implements ChatEngine {
   private static final Logger LOGGER = LoggerFactory.getLogger(SimpleChatEngine.class);
@@ -23,7 +22,7 @@ public class SimpleChatEngine implements ChatEngine {
 
   @Override
   public void sendMessage(ChatMessage message) {
-    LOGGER.debug("Sending message: {}", message);
+    LOGGER.debug("Sending message: {}", message.id());
     for (MessageListener listener : listeners) {
       try {
         listener.onMessage(message);
@@ -36,10 +35,7 @@ public class SimpleChatEngine implements ChatEngine {
 
   @Override
   public void registerListener(MessageListener listener) {
-    if (listener == null) {
-      LOGGER.error("Listener is null");
-      throw new IllegalArgumentException("listener cannot be null");
-    }
+    Objects.requireNonNull(listener, "listener must not be null");
 
     if (!listeners.addIfAbsent(listener)) {
       LOGGER.warn("Listener is already registered: {}", listener);
