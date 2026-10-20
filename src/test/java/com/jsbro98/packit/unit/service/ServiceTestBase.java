@@ -3,12 +3,13 @@ package com.jsbro98.packit.unit.service;
 import com.jsbro98.packit.engine.api.ChatEngine;
 import com.jsbro98.packit.errors.InvalidMessageException;
 import com.jsbro98.packit.model.ChatMessage;
-import com.jsbro98.packit.model.SendMessageRequest;
 import com.jsbro98.packit.service.ChatService;
 import com.jsbro98.packit.store.MessageStore;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static com.jsbro98.packit.TestingUtils.invalidRequest;
+import static com.jsbro98.packit.TestingUtils.validRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -23,14 +24,6 @@ abstract class ServiceTestBase {
   abstract ChatEngine getChatEngine();
 
   abstract MessageStore getMessageStore();
-
-  protected SendMessageRequest validRequest() {
-    return new SendMessageRequest("Bob", "test");
-  }
-
-  protected SendMessageRequest invalidRequest() {
-    return new SendMessageRequest(null, "");
-  }
 
   @BeforeEach
   void setUp() {
