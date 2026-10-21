@@ -1,4 +1,4 @@
-package com.jsbro98.packit.integration;
+package com.jsbro98.packit.it;
 
 import com.jsbro98.packit.controller.StompControllerAdvice;
 import com.jsbro98.packit.errors.InvalidMessageException;
