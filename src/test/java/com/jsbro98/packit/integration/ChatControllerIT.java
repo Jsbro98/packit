@@ -1,6 +1,6 @@
 package com.jsbro98.packit.integration;
 
-import com.jsbro98.packit.controller.ChatController;
+import com.jsbro98.packit.controller.StompControllerAdvice;
 import com.jsbro98.packit.errors.InvalidMessageException;
 import com.jsbro98.packit.model.SendMessageRequest;
 import com.jsbro98.packit.service.ChatService;
@@ -43,7 +43,7 @@ class ChatControllerIT {
   ChatService chatService;
 
   @MockitoSpyBean
-  ChatController controller;
+  StompControllerAdvice advice;
 
   private void send(String destination, Object payload) throws Exception {
     // A StompHeaderAccessor is needed to create the frame to test the endpoint (think WebMVC testing)
@@ -75,14 +75,14 @@ class ChatControllerIT {
     send("/app/send", validRequest());
 
     verify(chatService, timeout(1000)).processMessage(any(SendMessageRequest.class));
-    verify(controller, timeout(1000)).onInvalid(any(InvalidMessageException.class));
+    verify(advice, timeout(1000)).onInvalid(any(InvalidMessageException.class));
   }
 
   @Test
   void whenPayloadCannotBeConverted_controllerCatchesAndLogs_leavingServiceUntouched() throws Exception {
     send("/app/send", "{bad_message:");
 
-    verify(controller, timeout(1000)).onFailedConversion(any(MessageConversionException.class));
+    verify(advice, timeout(1000)).onFailedConversion(any(MessageConversionException.class));
     verify(chatService, never()).processMessage(any(SendMessageRequest.class));
   }
 }
