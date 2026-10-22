@@ -1,76 +1,74 @@
 package com.jsbro98.packit.it;
 
+import com.jsbro98.packit.controller.StompControllerAdvice;
+import com.jsbro98.packit.errors.InvalidMessageException;
 import com.jsbro98.packit.model.ChatMessage;
 import com.jsbro98.packit.model.SendMessageRequest;
-import org.jspecify.annotations.NonNull;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.messaging.converter.JacksonJsonMessageConverter;
-import org.springframework.messaging.simp.stomp.StompFrameHandler;
-import org.springframework.messaging.simp.stomp.StompHeaders;
-import org.springframework.messaging.simp.stomp.StompSession;
-import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
-import org.springframework.util.MimeTypeUtils;
-import org.springframework.web.socket.client.standard.StandardWebSocketClient;
-import org.springframework.web.socket.messaging.WebSocketStompClient;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
-import java.lang.reflect.Type;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-
+import static com.jsbro98.packit.TestingUtils.invalidRequest;
 import static com.jsbro98.packit.TestingUtils.validRequest;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.verify;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class WebSocketIT {
+  private final StompTestHelper stompTestHelper = new StompTestHelper();
+
   @LocalServerPort
   private Integer port;
 
-  private WebSocketStompClient stompClient;
-  private StompSession stompSession;
-
-  private String getWSPath() {
-    return String.format("ws://localhost:%d/ws", port);
-  }
+  @MockitoSpyBean
+  private StompControllerAdvice controllerAdvice;
 
   @BeforeEach
-  void setUp() throws Exception {
-    stompClient = new WebSocketStompClient(new StandardWebSocketClient());
-    stompClient.setMessageConverter(new JacksonJsonMessageConverter(MimeTypeUtils.APPLICATION_JSON));
-    stompSession = stompClient.connectAsync(getWSPath(), new StompSessionHandlerAdapter() {
-    }).get(1, SECONDS);
+  void setup() throws Exception {
+    stompTestHelper.init(port);
+    stompTestHelper.setDestinationAndBroadcast("/topic/messages", "/app/send");
   }
 
-  // TODO: Rename and Refactor this VVVVV
+  @AfterEach
+  void tearDown() {
+    stompTestHelper.disconnectSession();
+  }
+
+
   @Test
-  void verifyThatMessageRoutingWorks() throws Exception {
-    BlockingQueue<ChatMessage> blockingQueue = new ArrayBlockingQueue<>(1);
+  void whenValidSendRequestSent_overStomp_deliversChatMessageToTopicSubscribers() throws Exception {
     SendMessageRequest request = validRequest();
 
-    stompSession.subscribe("/topic/messages", new StompFrameHandler() {
+    stompTestHelper.sessionSend(request);
 
-      @Override
-      @NonNull
-      public Type getPayloadType(@NonNull StompHeaders headers) {
-        return ChatMessage.class;
-      }
-
-      @Override
-      public void handleFrame(@NonNull StompHeaders headers, Object payload) {
-        blockingQueue.add((ChatMessage) payload);
-      }
-    });
-
-    stompSession.send("/app/send", request);
-
-    ChatMessage message = blockingQueue.poll(3, SECONDS);
+    ChatMessage message = stompTestHelper.pollQueueWithTimeout(2, SECONDS);
 
     assertAll(
             () -> assertNotNull(message),
             () -> assertEquals(request.sender(), message.sender()),
             () -> assertEquals(request.content(), message.content()));
+  }
+
+  @Test
+  void whenInvalidSendRequestSent_overStomp_ChatMessageDoesNotSend() throws Exception {
+    SendMessageRequest request = invalidRequest();
+    stompTestHelper.sessionSend(request);
+
+    ChatMessage message = stompTestHelper.pollQueueWithTimeout(2, SECONDS);
+    assertNull(message);
+  }
+
+  @Test
+  void whenInvalidSendRequestSent_controllerAdviceCatchesCall() {
+    SendMessageRequest request = invalidRequest();
+    stompTestHelper.sessionSend(request);
+
+    verify(controllerAdvice, timeout(2000)).onInvalid(any(InvalidMessageException.class));
   }
 }
