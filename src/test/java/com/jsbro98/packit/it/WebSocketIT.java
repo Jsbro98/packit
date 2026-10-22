@@ -16,8 +16,7 @@ import static com.jsbro98.packit.TestingUtils.validRequest;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class WebSocketIT {
@@ -57,11 +56,16 @@ public class WebSocketIT {
 
   @Test
   void whenInvalidSendRequestSent_overStomp_ChatMessageDoesNotSend() throws Exception {
+    // spy on the default config BlockingQueue
+    var spyQueue = spy(stompTestHelper.getQueue());
+    stompTestHelper.setQueue(spyQueue);
+
     SendMessageRequest request = invalidRequest();
     stompTestHelper.sessionSend(request);
 
     ChatMessage message = stompTestHelper.pollQueueWithTimeout(2, SECONDS);
     assertNull(message);
+    verify(spyQueue, never()).add(any());
   }
 
   @Test
