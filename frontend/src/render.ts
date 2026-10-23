@@ -1,4 +1,3 @@
-import type { Client } from "@stomp/stompjs";
 import type { Message, Renderer } from "./types";
 
 // ---------- functions ----------
