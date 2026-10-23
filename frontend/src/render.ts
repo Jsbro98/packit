@@ -1,4 +1,4 @@
-import type { Message, Renderer } from "./types";
+import type { SendMessageRequest, Renderer } from "./types";
 
 // ---------- functions ----------
 
@@ -8,7 +8,7 @@ export function createRenderer(): Renderer {
   const submitButton = requireElement<HTMLButtonElement>("#send-button");
   const chatBox = requireElement<HTMLDivElement>(".chat-box");
 
-  function getDraft(): Message {
+  function getDraft(): SendMessageRequest {
     return {
       sender: usernameInput.value.trim(),
       content: inputTextBox.value.trim(),
@@ -16,11 +16,11 @@ export function createRenderer(): Renderer {
   }
 
   return {
-    appendToChat(message: Message) {
+    appendToChat(message: SendMessageRequest) {
       appendMessage(message, chatBox);
     },
 
-    appendHistory(messageHistory: Message[]) {
+    appendHistory(messageHistory: SendMessageRequest[]) {
       for (const message of messageHistory) {
         appendMessage(message, chatBox);
       }
@@ -31,7 +31,7 @@ export function createRenderer(): Renderer {
       inputTextBox.value = "";
     },
 
-    onSend(callback: (draft: Message) => void) {
+    onSend(callback: (draft: SendMessageRequest) => void) {
       submitButton.addEventListener("click", (e) => {
         e.preventDefault();
         const draft = getDraft();
@@ -42,7 +42,7 @@ export function createRenderer(): Renderer {
   };
 }
 
-function createChatMessageNode(message: Message): HTMLDivElement {
+function createChatMessageNode(message: SendMessageRequest): HTMLDivElement {
   const result: HTMLDivElement = document.createElement("div");
   result.classList.add("chat-message");
 
@@ -58,7 +58,7 @@ function createChatMessageNode(message: Message): HTMLDivElement {
   return result;
 }
 
-function appendMessage(message: Message, elem: HTMLElement) {
+function appendMessage(message: SendMessageRequest, elem: HTMLElement) {
   const messageNode = createChatMessageNode(message);
   elem.appendChild(messageNode);
 }

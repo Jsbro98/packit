@@ -4,7 +4,7 @@ import { createRenderer } from "./render";
 import type { Client, IFrame } from "@stomp/stompjs";
 import { getMessageHistory } from "./history";
 import type {
-  Message,
+  SendMessageRequest,
   OnConnectHandler,
   OnSendHandler,
   Renderer,
@@ -38,11 +38,11 @@ function createConnectionHandler(
   renderer: Renderer,
 ): OnConnectHandler {
   return async function (frame: IFrame) {
-    const messageHistory: Message[] = await getMessageHistory();
+    const messageHistory: SendMessageRequest[] = await getMessageHistory();
     renderer.appendHistory(messageHistory);
 
     client.subscribe("/topic/messages", (message) => {
-      const messageRecord: Message = JSON.parse(message.body);
+      const messageRecord: SendMessageRequest = JSON.parse(message.body);
       renderer.appendToChat(messageRecord);
     });
   };
@@ -52,7 +52,7 @@ function createOnSendHandler(
   client: Client,
   renderer: Renderer,
 ): OnSendHandler {
-  return function (draft: Message) {
+  return function (draft: SendMessageRequest) {
     if (!client.connected) return; // connect guard
     client.publish({
       destination: "/app/send",

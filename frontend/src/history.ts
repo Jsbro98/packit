@@ -1,6 +1,6 @@
-import type { Message } from "./types";
+import type { SendMessageRequest } from "./types";
 
-export async function getMessageHistory(): Promise<Message[]> {
+export async function getMessageHistory(): Promise<SendMessageRequest[]> {
   const response = await fetch("/api/history");
 
   if (!response.ok) {
