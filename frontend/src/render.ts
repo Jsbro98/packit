@@ -1,7 +1,5 @@
 import type { SendMessageRequest, Renderer, ChatMessage } from "./types";
 
-// ---------- functions ----------
-
 export function createRenderer(): Renderer {
   const inputTextBox = requireElement<HTMLInputElement>("#user-textbox");
   const usernameInput = requireElement<HTMLInputElement>("#username");
