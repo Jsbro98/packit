@@ -1,107 +1,58 @@
-import {Client} from "@stomp/stompjs";
 import "./style.css";
+import {createStompClient, setClientHandlers} from "./stomp";
+import {chatMessageStream, inputTextBox, submitButton, usernameInput,} from "./render";
+import type {Client, IFrame} from "@stomp/stompjs";
+import {getMessageHistory} from "./history";
+import type {Message} from "./types";
 
-// ---------- Types ----------
+// ####
+main();
 
-interface Message {
-  sender: string;
-  content: string;
+// ####
+
+function main() {
+    const client: Client = createStompClient();
+
+    setClientHandlers(client, createConnectionHandler(client));
+    configSubmitButtonListener(client);
+
+    client.activate();
 }
-
-// ---------------------------
-
-const client = new Client();
-
-// using '/ws/' for now to allow ngrok
-client.brokerURL = "/ws";
-
-const inputTextBox = requireElement<HTMLInputElement>("#user-textbox");
-const usernameInput = requireElement<HTMLInputElement>("#username");
-const submitButton = requireElement<HTMLButtonElement>("#send-button");
-const chatBox = requireElement<HTMLDivElement>(".chat-box");
-
-const chatMessageStream = {
-  append(message: Message) {
-    const messageNode = createChatMessageNode(message);
-    chatBox.appendChild(messageNode);
-  },
-};
-
-// main listener for sending messages to the server
-submitButton.addEventListener("click", (e) => {
-  e.preventDefault();
-  const sender = usernameInput.value.trim();
-  const text = inputTextBox.value.trim();
-  if (!sender || !text) return; // you need a user & message to publish
-  client.publish({
-    destination: "/app/send",
-    body: JSON.stringify({
-      sender: sender,
-      content: text,
-    }),
-  });
-  inputTextBox.value = ""; // clear the input for the next message
-});
-
-// connection logic for listening to the server
-client.onConnect = async (frame) => {
-  const messageHistory: Message[] = await getMessageHistory();
-  for (const message of messageHistory) {
-    chatMessageStream.append(message);
-  }
-
-  client.subscribe("/topic/messages", (message) => {
-    const messageRecord: Message = JSON.parse(message.body);
-    chatMessageStream.append(messageRecord);
-  });
-};
-
-client.onStompError = (event) => {
-  console.error("Stomp error: ", event);
-};
-
-client.onWebSocketError = (event) => {
-  console.error("WebSocket error:", event);
-};
-
-client.onWebSocketClose = (event) => {
-  console.log("WebSocket close:", event);
-};
-
-client.activate();
 
 // ---------- functions ----------
 
-async function getMessageHistory(): Promise<Message[]> {
-  const response = await fetch("/api/history");
+function createConnectionHandler(client: Client) {
+    return async function (frame: IFrame) {
+        const messageHistory: Message[] = await getMessageHistory();
+        for (const message of messageHistory) {
+            chatMessageStream.append(message);
+        }
 
-  if (!response.ok) {
-    throw new Error(`Failed to fetch history: ${response.status}`);
-  }
-
-  return await response.json();
+        client.subscribe("/topic/messages", (message) => {
+            const messageRecord: Message = JSON.parse(message.body);
+            chatMessageStream.append(messageRecord);
+        });
+    };
 }
 
-function createChatMessageNode(message: Message): HTMLDivElement {
-  const result: HTMLDivElement = document.createElement("div");
-  result.classList.add("chat-message");
+function configSubmitButtonListener(client: Client) {
+    // main listener for sending messages to the server
+    submitButton.addEventListener("click", (e) => {
+        e.preventDefault();
 
-  const username: HTMLDivElement = document.createElement("div");
-  username.textContent = `From: ${message.sender}`;
+        const sender = usernameInput.value.trim();
+        const text = inputTextBox.value.trim();
 
-  const messageBody: HTMLParagraphElement = document.createElement("p");
-  messageBody.textContent = `${message.content}`;
+        if (!sender || !text) return; // you need a user & message to publish
 
-  result.appendChild(username);
-  result.appendChild(messageBody);
+        client.publish({
+            destination: "/app/send",
+            body: JSON.stringify({
+                sender: sender,
+                content: text,
+            }),
+        });
 
-  return result;
-}
-
-function requireElement<T extends HTMLElement>(selector: string): T {
-  const element = document.querySelector<T>(selector);
-  if (!element) {
-    throw new Error(`Required DOM element non-existent: "${selector}"`);
-  }
-  return element;
+        inputTextBox.value = ""; // clear the input for the next message
+    });
 }
