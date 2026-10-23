@@ -7,7 +7,6 @@ import type {Message} from "./types";
 
 // ####
 main();
-
 // ####
 
 function main() {
