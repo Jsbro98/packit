@@ -1,6 +1,6 @@
-import type { SendMessageRequest } from "./types";
+import type { ChatMessage } from "./types";
 
-export async function getMessageHistory(): Promise<SendMessageRequest[]> {
+export async function getMessageHistory(): Promise<ChatMessage[]> {
   const response = await fetch("/api/history");
 
   if (!response.ok) {

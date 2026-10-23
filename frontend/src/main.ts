@@ -8,6 +8,7 @@ import type {
   OnConnectHandler,
   OnSendHandler,
   Renderer,
+  ChatMessage,
 } from "./types";
 
 // ####
@@ -38,11 +39,11 @@ function createConnectionHandler(
   renderer: Renderer,
 ): OnConnectHandler {
   return async function (_: IFrame) {
-    const messageHistory: SendMessageRequest[] = await getMessageHistory();
+    const messageHistory: ChatMessage[] = await getMessageHistory();
     renderer.appendHistory(messageHistory);
 
     client.subscribe("/topic/messages", (message) => {
-      const messageRecord: SendMessageRequest = JSON.parse(message.body);
+      const messageRecord: ChatMessage = JSON.parse(message.body);
       renderer.appendToChat(messageRecord);
     });
   };

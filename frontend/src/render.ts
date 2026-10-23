@@ -1,4 +1,4 @@
-import type { SendMessageRequest, Renderer } from "./types";
+import type { SendMessageRequest, Renderer, ChatMessage } from "./types";
 
 // ---------- functions ----------
 
@@ -16,11 +16,11 @@ export function createRenderer(): Renderer {
   }
 
   return {
-    appendToChat(message: SendMessageRequest) {
+    appendToChat(message: ChatMessage) {
       appendMessage(message, chatBox);
     },
 
-    appendHistory(messageHistory: SendMessageRequest[]) {
+    appendHistory(messageHistory: ChatMessage[]) {
       for (const message of messageHistory) {
         appendMessage(message, chatBox);
       }
@@ -42,7 +42,7 @@ export function createRenderer(): Renderer {
   };
 }
 
-function createChatMessageNode(message: SendMessageRequest): HTMLDivElement {
+function createChatMessageNode(message: ChatMessage): HTMLDivElement {
   const result: HTMLDivElement = document.createElement("div");
   result.classList.add("chat-message");
 
@@ -58,7 +58,7 @@ function createChatMessageNode(message: SendMessageRequest): HTMLDivElement {
   return result;
 }
 
-function appendMessage(message: SendMessageRequest, elem: HTMLElement) {
+function appendMessage(message: ChatMessage, elem: HTMLElement) {
   const messageNode = createChatMessageNode(message);
   elem.appendChild(messageNode);
 }
