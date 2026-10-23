@@ -10,7 +10,7 @@ export function createStompClient(): Client {
 }
 
 // connection logic for listening to the server
-export function setClientHandlers(
+export function setClientHandler(
   client: Client,
   onConnectHandler: (frame: IFrame) => Promise<void>,
 ): void {
