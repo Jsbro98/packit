@@ -1,4 +1,4 @@
-import type { Client, IFrame } from "@stomp/stompjs";
+import type { IFrame } from "@stomp/stompjs";
 
 export interface Message {
   sender: string;
@@ -8,7 +8,10 @@ export interface Message {
 export interface Renderer {
   appendToChat(message: Message): void;
   appendHistory(message: Message[]): void;
-  bindSubmitListener(client: Client): void;
+  getDraft(): Message;
+  clearDraft(): void;
+  onSend(callback: (draft: Message) => void): void;
 }
 
 export type OnConnectHandler = (frame: IFrame) => Promise<void>;
+export type OnSendHandler = (draft: Message) => void;
