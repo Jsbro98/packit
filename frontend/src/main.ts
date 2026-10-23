@@ -1,9 +1,14 @@
 import "./style.css";
-import { createStompClient, setClientHandlers } from "./stomp";
+import { createStompClient, setClientHandler } from "./stomp";
 import { createRenderer } from "./render";
 import type { Client, IFrame } from "@stomp/stompjs";
 import { getMessageHistory } from "./history";
-import type { Message, OnConnectHandler, Renderer } from "./types";
+import type {
+  Message,
+  OnConnectHandler,
+  OnSendHandler,
+  Renderer,
+} from "./types";
 
 // ####
 main();
@@ -13,10 +18,15 @@ function main() {
   const renderer: Renderer = createRenderer();
   const client: Client = createStompClient();
 
-  const handler: OnConnectHandler = createConnectionHandler(client, renderer);
+  const connectionHandler: OnConnectHandler = createConnectionHandler(
+    client,
+    renderer,
+  );
+  const onSendHandler: OnSendHandler = createOnSendHandler(client, renderer);
 
-  setClientHandlers(client, handler);
-  renderer.bindSubmitListener(client);
+  setClientHandler(client, connectionHandler);
+
+  renderer.onSend(onSendHandler);
 
   client.activate();
 }
@@ -35,5 +45,19 @@ function createConnectionHandler(
       const messageRecord: Message = JSON.parse(message.body);
       renderer.appendToChat(messageRecord);
     });
+  };
+}
+
+function createOnSendHandler(
+  client: Client,
+  renderer: Renderer,
+): OnSendHandler {
+  return function (draft: Message) {
+    if (!client.connected) return; // connect guard
+    client.publish({
+      destination: "/app/send",
+      body: JSON.stringify(draft),
+    });
+    renderer.clearDraft();
   };
 }
