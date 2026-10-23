@@ -9,6 +9,13 @@ export function createRenderer(): Renderer {
   const submitButton = requireElement<HTMLButtonElement>("#send-button");
   const chatBox = requireElement<HTMLDivElement>(".chat-box");
 
+  function getDraft(): Message {
+    return {
+      sender: usernameInput.value.trim(),
+      content: inputTextBox.value.trim(),
+    };
+  }
+
   return {
     appendToChat(message: Message) {
       appendMessage(message, chatBox);
@@ -20,25 +27,17 @@ export function createRenderer(): Renderer {
       }
     },
 
-    bindSubmitListener(client: Client) {
-      // main listener for sending messages to the server
+    getDraft,
+    clearDraft() {
+      inputTextBox.value = "";
+    },
+
+    onSend(callback: (draft: Message) => void) {
       submitButton.addEventListener("click", (e) => {
         e.preventDefault();
-
-        const sender = usernameInput.value.trim();
-        const text = inputTextBox.value.trim();
-
-        if (!sender || !text) return; // you need a user & message to publish
-
-        client.publish({
-          destination: "/app/send",
-          body: JSON.stringify({
-            sender: sender,
-            content: text,
-          }),
-        });
-
-        inputTextBox.value = ""; // clear the input for the next message
+        const draft = getDraft();
+        if (!draft.sender || !draft.content) return;
+        callback(draft);
       });
     },
   };
