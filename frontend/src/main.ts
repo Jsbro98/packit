@@ -16,7 +16,7 @@ function main() {
   const handler: OnConnectHandler = createConnectionHandler(client, renderer);
 
   setClientHandlers(client, handler);
-  renderer.configSubmitListener(client);
+  renderer.bindSubmitListener(client);
 
   client.activate();
 }

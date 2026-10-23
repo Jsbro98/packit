@@ -20,7 +20,7 @@ export function createRenderer(): Renderer {
       }
     },
 
-    configSubmitListener(client: Client) {
+    bindSubmitListener(client: Client) {
       // main listener for sending messages to the server
       submitButton.addEventListener("click", (e) => {
         e.preventDefault();

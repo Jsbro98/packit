@@ -8,7 +8,7 @@ export interface Message {
 export interface Renderer {
   appendToChat(message: Message): void;
   appendHistory(message: Message[]): void;
-  configSubmitListener(client: Client): void;
+  bindSubmitListener(client: Client): void;
 }
 
 export type OnConnectHandler = (frame: IFrame) => Promise<void>;
