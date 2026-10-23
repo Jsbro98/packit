@@ -37,7 +37,7 @@ function createConnectionHandler(
   client: Client,
   renderer: Renderer,
 ): OnConnectHandler {
-  return async function (frame: IFrame) {
+  return async function (_: IFrame) {
     const messageHistory: SendMessageRequest[] = await getMessageHistory();
     renderer.appendHistory(messageHistory);
 
