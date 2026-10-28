@@ -39,14 +39,45 @@ function createConnectionHandler(
   renderer: Renderer,
 ): OnConnectHandler {
   return async function (_: IFrame) {
-    const messageHistory: ChatMessage[] = await getMessageHistory();
-    renderer.appendHistory(messageHistory);
-
     client.subscribe("/topic/messages", (message) => {
       const messageRecord: ChatMessage = JSON.parse(message.body);
       renderer.appendToChat(messageRecord);
     });
+
+    // FIXME: Buffer messages until messagehistory loads?
+
+    const messageHistory = await withRetries<ChatMessage[]>(5, () => {
+      return getMessageHistory();
+    });
+
+    if (Error.isError(messageHistory)) {
+      return;
+    }
+
+    renderer.appendHistory(messageHistory);
   };
+
+  // used to allow message history to have multiple attempts at fetching
+  async function withRetries<T>(
+    value: number,
+    callback: () => Promise<T>,
+  ): Promise<T | Error> {
+    if (value <= 0) {
+      throw new RangeError("Retry count must be positive");
+    }
+
+    let returnError: Error;
+
+    for (let retries = 0; retries < value; retries++) {
+      try {
+        return await callback();
+      } catch (error) {
+        returnError = error as Error;
+      }
+    }
+
+    return returnError!;
+  }
 }
 
 function createOnSendHandler(
