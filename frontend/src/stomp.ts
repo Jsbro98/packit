@@ -1,4 +1,5 @@
-import { Client, type IFrame } from "@stomp/stompjs";
+import { Client } from "@stomp/stompjs";
+import type { OnConnectHandler } from "./types";
 
 export function createStompClient(): Client {
   const client = new Client();
@@ -12,7 +13,7 @@ export function createStompClient(): Client {
 // connection logic for listening to the server
 export function setClientHandler(
   client: Client,
-  onConnectHandler: (frame: IFrame) => Promise<void>,
+  onConnectHandler: OnConnectHandler,
 ): void {
   client.onConnect = onConnectHandler;
 
