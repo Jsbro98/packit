@@ -16,7 +16,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
   @Override
   public void registerStompEndpoints(StompEndpointRegistry registry) {
     LOGGER.debug("Registering WebSocket API endpoints");
-    registry.addEndpoint("/ws");
+    // TODO: setAllowedOrgins is set to all to allow ngrok testing
+    //  change this in prod
+    registry.addEndpoint("/ws").setAllowedOrigins("*");
   }
 
   @Override
