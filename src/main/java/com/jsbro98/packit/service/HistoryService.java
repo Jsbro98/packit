@@ -2,11 +2,10 @@ package com.jsbro98.packit.service;
 
 import com.jsbro98.packit.model.ChatMessage;
 import com.jsbro98.packit.store.MessageStore;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class HistoryService {
@@ -17,7 +16,6 @@ public class HistoryService {
   public HistoryService(MessageStore messageHistory) {
     this.messageHistory = messageHistory;
   }
-
 
   public List<ChatMessage> getMessageData() {
     LOGGER.debug("Retrieving messages");

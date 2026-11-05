@@ -1,16 +1,15 @@
 package com.jsbro98.packit.unit;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.jsbro98.packit.engine.api.MessageListener;
 import com.jsbro98.packit.engine.impl.SimpleChatEngine;
 import com.jsbro98.packit.errors.ListenerFailedException;
 import com.jsbro98.packit.model.ChatMessage;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import java.time.Instant;
 import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 class SimpleChatEngineTest {
   private SimpleChatEngine chatEngine;
@@ -36,17 +35,17 @@ class SimpleChatEngineTest {
   void registerListener_shouldThrow_whenGivenANullListener() {
     MessageListener listener = null;
 
-    IllegalArgumentException ex = assertThrows(
-            IllegalArgumentException.class,
-            () -> chatEngine.registerListener(listener));
+    IllegalArgumentException ex =
+        assertThrows(IllegalArgumentException.class, () -> chatEngine.registerListener(listener));
     assertEquals("listener cannot be null", ex.getMessage());
   }
 
   @Test
   void sendMessage_shouldThrow_whenABadListenerIsRegistered() {
-    MessageListener listener = _ -> {
-      throw new RuntimeException("BOOM!");
-    };
+    MessageListener listener =
+        _ -> {
+          throw new RuntimeException("BOOM!");
+        };
     ChatMessage message = new ChatMessage(UUID.randomUUID(), Instant.now(), "Bob", "Testing...");
 
     chatEngine.registerListener(listener);

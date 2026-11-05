@@ -2,13 +2,12 @@ package com.jsbro98.packit.controller;
 
 import com.jsbro98.packit.model.ChatMessage;
 import com.jsbro98.packit.service.HistoryService;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api")

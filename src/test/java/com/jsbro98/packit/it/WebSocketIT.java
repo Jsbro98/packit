@@ -1,5 +1,12 @@
 package com.jsbro98.packit.it;
 
+import static com.jsbro98.packit.TestingUtils.invalidRequest;
+import static com.jsbro98.packit.TestingUtils.validRequest;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
 import com.jsbro98.packit.controller.StompControllerAdvice;
 import com.jsbro98.packit.errors.InvalidMessageException;
 import com.jsbro98.packit.model.ChatMessage;
@@ -11,22 +18,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
-import static com.jsbro98.packit.TestingUtils.invalidRequest;
-import static com.jsbro98.packit.TestingUtils.validRequest;
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class WebSocketIT {
   private final StompTestHelper stompTestHelper = new StompTestHelper();
 
-  @LocalServerPort
-  private Integer port;
+  @LocalServerPort private Integer port;
 
-  @MockitoSpyBean
-  private StompControllerAdvice controllerAdvice;
+  @MockitoSpyBean private StompControllerAdvice controllerAdvice;
 
   @BeforeEach
   void setup() throws Exception {
@@ -39,7 +37,6 @@ public class WebSocketIT {
     stompTestHelper.disconnectSession();
   }
 
-
   @Test
   void whenValidSendRequestSent_overStomp_deliversChatMessageToTopicSubscribers() throws Exception {
     SendMessageRequest request = validRequest();
@@ -49,9 +46,9 @@ public class WebSocketIT {
     ChatMessage message = stompTestHelper.pollQueueWithTimeout(2, SECONDS);
 
     assertAll(
-            () -> assertNotNull(message),
-            () -> assertEquals(request.sender(), message.sender()),
-            () -> assertEquals(request.content(), message.content()));
+        () -> assertNotNull(message),
+        () -> assertEquals(request.sender(), message.sender()),
+        () -> assertEquals(request.content(), message.content()));
   }
 
   @Test

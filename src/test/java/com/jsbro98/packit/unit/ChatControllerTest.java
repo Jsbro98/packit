@@ -1,5 +1,9 @@
 package com.jsbro98.packit.unit;
 
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+
 import com.jsbro98.packit.controller.ChatController;
 import com.jsbro98.packit.model.SendMessageRequest;
 import com.jsbro98.packit.service.ChatService;
@@ -10,18 +14,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-
 @ExtendWith(MockitoExtension.class)
 class ChatControllerTest {
 
-  @Mock
-  private ChatService chatService;
+  @Mock private ChatService chatService;
 
-  @InjectMocks
-  private ChatController controller;
+  @InjectMocks private ChatController controller;
 
   private SendMessageRequest validRequest() {
     return new SendMessageRequest("Test", "Test");

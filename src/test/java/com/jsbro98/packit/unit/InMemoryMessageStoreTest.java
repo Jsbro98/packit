@@ -1,13 +1,12 @@
 package com.jsbro98.packit.unit;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.jsbro98.packit.model.ChatMessage;
 import com.jsbro98.packit.store.InMemoryMessageStore;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class InMemoryMessageStoreTest {
 
@@ -32,10 +31,7 @@ class InMemoryMessageStoreTest {
   void getMessages_shouldReturnAValidListOfMessages() {
     fillMessages(store, 10);
     List<ChatMessage> sendMessageRequests = store.getMessages();
-    assertThat(sendMessageRequests)
-            .isNotNull()
-            .isNotEmpty()
-            .hasSize(10);
+    assertThat(sendMessageRequests).isNotNull().isNotEmpty().hasSize(10);
   }
 
   @Test
@@ -43,8 +39,7 @@ class InMemoryMessageStoreTest {
     fillMessages(store, 100);
     List<ChatMessage> sendMessageRequests = store.getMessages();
 
-    assertThat(sendMessageRequests)
-            .hasSize(store.getMaxMessageLimit());
+    assertThat(sendMessageRequests).hasSize(store.getMaxMessageLimit());
   }
 
   private void fillMessages(InMemoryMessageStore store, int amount) {

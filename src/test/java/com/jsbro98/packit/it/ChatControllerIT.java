@@ -1,9 +1,14 @@
 package com.jsbro98.packit.it;
 
+import static com.jsbro98.packit.TestingUtils.validRequest;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
 import com.jsbro98.packit.controller.StompControllerAdvice;
 import com.jsbro98.packit.errors.InvalidMessageException;
 import com.jsbro98.packit.model.SendMessageRequest;
 import com.jsbro98.packit.service.ChatService;
+import java.util.HashMap;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -18,16 +23,10 @@ import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.util.MimeTypeUtils;
 import tools.jackson.databind.ObjectMapper;
 
-import java.util.HashMap;
-
-import static com.jsbro98.packit.TestingUtils.validRequest;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-
 /*
-  NOTE: This class is annotated with comments I wrote
-  as I will be referring to it when I need to test STOMP endpoints
- */
+ NOTE: This class is annotated with comments I wrote
+ as I will be referring to it when I need to test STOMP endpoints
+*/
 
 @SpringBootTest
 class ChatControllerIT {
@@ -36,22 +35,25 @@ class ChatControllerIT {
   @Qualifier("clientInboundChannel")
   MessageChannel clientInboundChannel;
 
-  @Autowired
-  ObjectMapper mapper;
+  @Autowired ObjectMapper mapper;
 
-  @MockitoBean
-  ChatService chatService;
+  @MockitoBean ChatService chatService;
 
-  @MockitoSpyBean
-  StompControllerAdvice advice;
+  @MockitoSpyBean StompControllerAdvice advice;
 
   private void send(String destination, Object payload) throws Exception {
-    // A StompHeaderAccessor is needed to create the frame to test the endpoint (think WebMVC testing)
+    // A StompHeaderAccessor is needed to create the frame to test the endpoint
+    // (think WebMVC testing)
     var headers = StompHeaderAccessor.create(StompCommand.SEND);
     headers.setDestination(destination); // matched against @MessageMapping
-    headers.setContentType(MimeTypeUtils.APPLICATION_JSON); // optional here, but matches a real client; a wrong value breaks conversion
+
+    // optional here, but matches a real client
+    // a wrong value breaks conversion
+    headers.setContentType(MimeTypeUtils.APPLICATION_JSON);
+
     // Session ID and attributes are NEEDED here.
-    // Spring views either of these missing as an IllegalStateException as of 10/19 version Spring Boot::(v4.2.0-M2)
+    // Spring views either of these missing as an IllegalStateException as of 10/19 version
+    // Spring Boot::(v4.2.0-M2)
     headers.setSessionId("test-session");
     headers.setSessionAttributes(new HashMap<>());
 
@@ -79,7 +81,8 @@ class ChatControllerIT {
   }
 
   @Test
-  void whenPayloadCannotBeConverted_controllerCatchesAndLogs_leavingServiceUntouched() throws Exception {
+  void whenPayloadCannotBeConverted_controllerCatchesAndLogs_leavingServiceUntouched()
+      throws Exception {
     send("/app/send", "{bad_message:");
 
     verify(advice, timeout(1000)).onFailedConversion(any(MessageConversionException.class));

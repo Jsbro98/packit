@@ -4,11 +4,10 @@ import com.jsbro98.packit.engine.api.ChatEngine;
 import com.jsbro98.packit.engine.api.MessageListener;
 import com.jsbro98.packit.errors.ListenerFailedException;
 import com.jsbro98.packit.model.ChatMessage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 // @Profile("dev") enable when implementation is made
 public class SimpleChatEngine implements ChatEngine {

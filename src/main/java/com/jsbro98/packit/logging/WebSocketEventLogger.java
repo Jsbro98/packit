@@ -20,28 +20,34 @@ public class WebSocketEventLogger {
   @EventListener
   public void onConnected(SessionConnectedEvent event) {
     StompHeaderAccessor accessor = wrapEvent(event);
-    LOGGER.info("Client connected: sessionId={}, user={}",
-            accessor.getSessionId(), accessor.getUser());
+    LOGGER.info(
+        "Client connected: sessionId={}, user={}", accessor.getSessionId(), accessor.getUser());
   }
 
   @EventListener
   public void onSubscribe(SessionSubscribeEvent event) {
     StompHeaderAccessor accessor = wrapEvent(event);
-    LOGGER.debug("Client subscribed: sessionId={}, destination={}",
-            accessor.getSessionId(), accessor.getDestination());
+    LOGGER.debug(
+        "Client subscribed: sessionId={}, destination={}",
+        accessor.getSessionId(),
+        accessor.getDestination());
   }
 
   @EventListener
   public void onUnsubscribe(SessionUnsubscribeEvent event) {
     StompHeaderAccessor accessor = wrapEvent(event);
-    LOGGER.debug("Client unsubscribed: sessionId={}, destination={}",
-            accessor.getSessionId(), accessor.getDestination());
+    LOGGER.debug(
+        "Client unsubscribed: sessionId={}, destination={}",
+        accessor.getSessionId(),
+        accessor.getDestination());
   }
 
   @EventListener
   public void onDisconnect(SessionDisconnectEvent event) {
-    LOGGER.info("Client disconnected: sessionId={}, status={}",
-            event.getSessionId(), event.getCloseStatus());
+    LOGGER.info(
+        "Client disconnected: sessionId={}, status={}",
+        event.getSessionId(),
+        event.getCloseStatus());
   }
 
   private StompHeaderAccessor wrapEvent(AbstractSubProtocolEvent event) {

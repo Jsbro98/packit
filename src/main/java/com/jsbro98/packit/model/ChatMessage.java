@@ -1,7 +1,6 @@
 package com.jsbro98.packit.model;
 
 import com.jsbro98.packit.errors.InvalidMessageException;
-
 import java.time.Instant;
 import java.util.Objects;
 import java.util.UUID;

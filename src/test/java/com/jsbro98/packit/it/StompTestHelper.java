@@ -1,7 +1,13 @@
 package com.jsbro98.packit.it;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+
 import com.jsbro98.packit.model.ChatMessage;
 import com.jsbro98.packit.model.SendMessageRequest;
+import java.lang.reflect.Type;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,13 +16,6 @@ import org.springframework.messaging.simp.stomp.*;
 import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
-
-import java.lang.reflect.Type;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.TimeUnit;
-
-import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class StompTestHelper {
   private static final Logger LOGGER = LoggerFactory.getLogger(StompTestHelper.class);
@@ -35,10 +34,13 @@ public class StompTestHelper {
     queue = new ArrayBlockingQueue<>(1);
 
     stompClient = new WebSocketStompClient(new StandardWebSocketClient());
-    stompClient.setMessageConverter(new JacksonJsonMessageConverter(MimeTypeUtils.APPLICATION_JSON));
+    stompClient.setMessageConverter(
+        new JacksonJsonMessageConverter(MimeTypeUtils.APPLICATION_JSON));
 
-    stompSession = stompClient.connectAsync(getWSPath(port), new StompSessionHandlerAdapter() {
-    }).get(1, SECONDS);
+    stompSession =
+        stompClient
+            .connectAsync(getWSPath(port), new StompSessionHandlerAdapter() {})
+            .get(1, SECONDS);
     LOGGER.debug("init StompTestHelper completed");
   }
 
