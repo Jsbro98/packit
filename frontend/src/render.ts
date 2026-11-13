@@ -40,6 +40,12 @@ export function createRenderer(): Renderer {
   };
 }
 
+/**
+ * Creates a message element for the renderer
+ *
+ * @param message - ChatMessage type that was sent from the server
+ * @returns DOM element representing the ChatMessage that was used in the parameter
+ */
 function createChatMessageNode(message: ChatMessage): HTMLDivElement {
   const result: HTMLDivElement = document.createElement("div");
   result.classList.add("chat-message");
@@ -56,6 +62,13 @@ function createChatMessageNode(message: ChatMessage): HTMLDivElement {
   return result;
 }
 
+/**
+ * Creates a message element and then appends it to the `elem`
+ * prameter passed in
+ *
+ * @param message - ChatMessage type that was sent from the server
+ * @param elem - HTMLElement that is the target of the appended message
+ */
 function appendMessage(message: ChatMessage, elem: HTMLElement) {
   const messageNode = createChatMessageNode(message);
   elem.appendChild(messageNode);

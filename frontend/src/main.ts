@@ -15,25 +15,37 @@ import type {
 main();
 // ####
 
+/** main application function. All wiring for setup is done here */
 function main() {
+  // prepare the set pieces
   const renderer: Renderer = createRenderer();
   const client: Client = createStompClient();
 
+  // create the handlers
   const connectionHandler: OnConnectHandler = createConnectionHandler(
     client,
     renderer,
   );
   const onSendHandler: OnSendHandler = createOnSendHandler(client, renderer);
 
+  // wire everything together
   setClientHandler(client, connectionHandler);
-
   renderer.onSend(onSendHandler);
 
+  // start the client side
   client.activate();
 }
 
 // ---------- functions ----------
 
+/**
+ * Takes in a STOMP client and Renderer object and creates a cllback
+ * used for the connection STOMP event
+ *
+ * @param client - STOMP client
+ * @param renderer - DOM object for UI handling
+ * @returns a cutomized connection STOMP event callback used for zed connection event
+ */
 function createConnectionHandler(
   client: Client,
   renderer: Renderer,
@@ -56,30 +68,16 @@ function createConnectionHandler(
 
     renderer.appendHistory(messageHistory);
   };
-
-  // used to allow message history to have multiple attempts at fetching
-  async function withRetries<T>(
-    value: number,
-    callback: () => Promise<T>,
-  ): Promise<T | Error> {
-    if (value <= 0) {
-      throw new RangeError("Retry count must be positive");
-    }
-
-    let returnError: Error;
-
-    for (let retries = 0; retries < value; retries++) {
-      try {
-        return await callback();
-      } catch (error) {
-        returnError = error as Error;
-      }
-    }
-
-    return returnError!;
-  }
 }
 
+/**
+ * Takes in a STOMP client and Renderer object and creates a callback used
+ * for the send STOMP event
+ *
+ * @param client - STOMP client
+ * @param renderer - DOM object for UI handling
+ * @returns a cutomized send STOMP event callback used for zed send event
+ */
 function createOnSendHandler(
   client: Client,
   renderer: Renderer,
@@ -92,4 +90,26 @@ function createOnSendHandler(
     });
     renderer.clearDraft();
   };
+}
+
+// used to allow logic to have multiple attempts at execution
+async function withRetries<T>(
+  value: number,
+  callback: () => Promise<T>,
+): Promise<T | Error> {
+  if (value <= 0) {
+    throw new RangeError("Retry count must be positive");
+  }
+
+  let returnError: Error;
+
+  for (let retries = 0; retries < value; retries++) {
+    try {
+      return await callback();
+    } catch (error) {
+      returnError = error as Error;
+    }
+  }
+
+  return returnError!;
 }

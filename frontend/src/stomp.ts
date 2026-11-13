@@ -1,6 +1,11 @@
 import { Client } from "@stomp/stompjs";
 import type { OnConnectHandler } from "./types";
 
+/**
+ * Used to configure a STOMP client for STOMP operations
+ *
+ * @returns a STOMP client configured as needed
+ */
 export function createStompClient(): Client {
   const client = new Client();
 
@@ -10,7 +15,13 @@ export function createStompClient(): Client {
   return client;
 }
 
-// connection logic for listening to the server
+/**
+ * Wires logic for listening to the server to a STOMP client using a callback
+ * Extra logic is used for error handling an closing of the WebSocket
+ *
+ * @param client - STOMP client
+ * @param onConnectHandler - callback passed in to configure what to do on the connect event
+ */
 export function setClientHandler(
   client: Client,
   onConnectHandler: OnConnectHandler,
