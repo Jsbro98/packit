@@ -39,12 +39,15 @@ function main() {
 // ---------- functions ----------
 
 /**
- * Takes in a STOMP client and Renderer object and creates a cllback
- * used for the connection STOMP event
+ * Builds the handler that runs on every (re)connect: subscribes to live
+ * messages, then loads history
  *
- * @param client - STOMP client
- * @param renderer - DOM object for UI handling
- * @returns a cutomized connection STOMP event callback used for zed connection event
+ * @remarks
+ * Re-runs on each reconnect, so history can be appended more than once
+ *
+ * @param client - STOMP client to subscribe on
+ * @param renderer - UI layer that receives messages
+ * @returns The connect handler to pass to `setClientHandler`
  */
 function createConnectionHandler(
   client: Client,
@@ -76,7 +79,7 @@ function createConnectionHandler(
  *
  * @param client - STOMP client
  * @param renderer - DOM object for UI handling
- * @returns a cutomized send STOMP event callback used for zed send event
+ * @returns The send handler to pass to Renderer
  */
 function createOnSendHandler(
   client: Client,
@@ -93,27 +96,27 @@ function createOnSendHandler(
 }
 
 /**
- * Retries an async operation, returning the first success.
+ * Retries an async operation, returning the first success
  *
- * @param attempts - Max tries. Must be positive.
- * @param callback - Operation to run, called fresh on each try.
- * @returns The result, or the last error if every attempt failed.
- * @throws {RangeError} If `attempts` is not positive.
+ * @param attempts - Max tries. Must be positive
+ * @param callback - Operation to run, called fresh on each try
+ * @returns The result, or the last error if every attempt failed
+ * @throws {RangeError} If `attempts` is not positive
  *
  * @example
  * const history = await withRetries(5, getMessageHistory);
  */
 async function withRetries<T>(
-  value: number,
+  attempts: number,
   callback: () => Promise<T>,
 ): Promise<T | Error> {
-  if (value <= 0) {
+  if (attempts <= 0) {
     throw new RangeError("Retry count must be positive");
   }
 
   let returnError: Error;
 
-  for (let retries = 0; retries < value; retries++) {
+  for (let retries = 0; retries < attempts; retries++) {
     try {
       return await callback();
     } catch (error) {

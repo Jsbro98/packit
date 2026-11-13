@@ -3,6 +3,7 @@ import type { ChatMessage } from "./types";
 /**
  * Fetches the current chat history from the server using the '/api/history' path
  *
+ * @throws {Error} If the server responds with a non-OK status.
  * @returns a Promise with an array for the current chat history
  */
 export async function getMessageHistory(): Promise<ChatMessage[]> {

@@ -4,6 +4,8 @@ import type { SendMessageRequest, Renderer, ChatMessage } from "./types";
  * Creates and returns a Renderer object used as a UI layer for messaging logic
  * Gets the required elements and then configures the Renderer object using those elements
  *
+ * @throws {Error} if `requireElement` fails
+ * @see requireElement
  * @returns a Renderer object
  */
 export function createRenderer(): Renderer {
@@ -70,7 +72,7 @@ function createChatMessageNode(message: ChatMessage): HTMLDivElement {
 
 /**
  * Creates a message element and then appends it to the `elem`
- * prameter passed in
+ * parameter passed in
  *
  * @param message - ChatMessage type that was sent from the server
  * @param elem - HTMLElement that is the target of the appended message
@@ -80,6 +82,11 @@ function appendMessage(message: ChatMessage, elem: HTMLElement) {
   elem.appendChild(messageNode);
 }
 
+/**
+ * @throws {Error} If a required element is not in the DOM.
+ * @param selector - CSS selector
+ * @returns the element used for the selector
+ */
 function requireElement<T extends HTMLElement>(selector: string): T {
   const element = document.querySelector<T>(selector);
   if (!element) {

@@ -9,7 +9,7 @@ import type { OnConnectHandler } from "./types";
 export function createStompClient(): Client {
   const client = new Client();
 
-  // using '/ws/' for now to allow ngrok
+  // using '/ws' for now to allow ngrok
   client.brokerURL = "/ws";
 
   return client;
@@ -17,7 +17,7 @@ export function createStompClient(): Client {
 
 /**
  * Wires logic for listening to the server to a STOMP client using a callback
- * Extra logic is used for error handling an closing of the WebSocket
+ * Extra logic is used for error handling and closing of the WebSocket
  *
  * @param client - STOMP client
  * @param onConnectHandler - callback passed in to configure what to do on the connect event
