@@ -92,7 +92,17 @@ function createOnSendHandler(
   };
 }
 
-// used to allow logic to have multiple attempts at execution
+/**
+ * Retries an async operation, returning the first success.
+ *
+ * @param attempts - Max tries. Must be positive.
+ * @param callback - Operation to run, called fresh on each try.
+ * @returns The result, or the last error if every attempt failed.
+ * @throws {RangeError} If `attempts` is not positive.
+ *
+ * @example
+ * const history = await withRetries(5, getMessageHistory);
+ */
 async function withRetries<T>(
   value: number,
   callback: () => Promise<T>,
