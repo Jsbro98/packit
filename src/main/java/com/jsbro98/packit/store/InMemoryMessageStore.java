@@ -2,7 +2,6 @@ package com.jsbro98.packit.store;
 
 import com.jsbro98.packit.model.ChatMessage;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -37,11 +36,6 @@ public class InMemoryMessageStore implements LimitingMessageStore {
 
   @Override
   public List<ChatMessage> getMessages() {
-    // avoiding returning null here
-    if (messages.isEmpty()) {
-      return Collections.emptyList();
-    }
-
     return new ArrayList<>(messages);
   }
 
