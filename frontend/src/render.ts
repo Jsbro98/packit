@@ -1,5 +1,11 @@
 import type { SendMessageRequest, Renderer, ChatMessage } from "./types";
 
+/**
+ * Creates and returns a Renderer object used as a UI layer for messaging logic
+ * Gets the required elements and then configures the Renderer object using those elements
+ *
+ * @returns a Renderer object
+ */
 export function createRenderer(): Renderer {
   const inputTextBox = requireElement<HTMLInputElement>("#user-textbox");
   const usernameInput = requireElement<HTMLInputElement>("#username");
