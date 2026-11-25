@@ -64,11 +64,12 @@ function createChatMessageNode(message: ChatMessage): HTMLDivElement {
   const timeStamp = createTimestamp(message.timestamp);
   username.appendChild(timeStamp);
 
-  const messageBody: HTMLParagraphElement = document.createElement("p");
-  messageBody.textContent = message.content;
+  const messageContent: HTMLParagraphElement = document.createElement("p");
+  messageContent.classList.add("message-content");
+  messageContent.textContent = message.content;
 
   result.appendChild(username);
-  result.appendChild(messageBody);
+  result.appendChild(messageContent);
 
   return result;
 }
