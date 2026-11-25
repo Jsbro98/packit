@@ -61,8 +61,11 @@ function createChatMessageNode(message: ChatMessage): HTMLDivElement {
   const username: HTMLDivElement = document.createElement("div");
   username.textContent = `From: ${message.sender}`;
 
+  const timeStamp = createTimestamp(message.timestamp);
+  username.appendChild(timeStamp);
+
   const messageBody: HTMLParagraphElement = document.createElement("p");
-  messageBody.textContent = `${message.content}`;
+  messageBody.textContent = message.content;
 
   result.appendChild(username);
   result.appendChild(messageBody);
@@ -93,4 +96,50 @@ function requireElement<T extends HTMLElement>(selector: string): T {
     throw new Error(`Required DOM element non-existent: "${selector}"`);
   }
   return element;
+}
+
+/**
+ * Uses a `timestamp` field from a ChatMessage object to create a span to use
+ * as a timestamp element
+ *
+ * @param timestamp - Instant instance converted from Jackson to a string
+ * @returns span element with normalized timestamp textcontent
+ */
+function createTimestamp(timestamp: string): HTMLSpanElement {
+  const timeStamp: HTMLSpanElement = document.createElement("span");
+  timeStamp.classList.add("date-time");
+  const { time, date } = getDateTimeFromTimestamp(timestamp);
+  timeStamp.textContent = ` | ${time} ${date}`;
+
+  return timeStamp;
+}
+
+/**
+ * Takes in a timestamp from a ChatMessage timestamp field and converts it into
+ * an object with two properties: `time` and `date`
+ *
+ * @param timestamp - Instant instance converted from Jackson to a string
+ * @returns object with `time` and `date` properties
+ */
+function getDateTimeFromTimestamp(timestamp: string): {
+  time: string;
+  date: string;
+} {
+  const instant = Temporal.Instant.from(timestamp);
+
+  // show in the user's local timezone
+  const local = instant.toZonedDateTimeISO(Temporal.Now.timeZoneId());
+
+  const time = local
+    .toLocaleString("en-US", { hour: "numeric", minute: "2-digit" })
+    .replace(/\s/g, "")
+    .toLowerCase();
+
+  const date = local.toLocaleString("en-US", {
+    month: "numeric",
+    day: "numeric",
+    year: "2-digit",
+  });
+
+  return { time, date };
 }
