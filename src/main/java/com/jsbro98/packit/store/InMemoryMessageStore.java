@@ -19,7 +19,7 @@ public class InMemoryMessageStore implements LimitingMessageStore {
   private final ConcurrentLinkedDeque<ChatMessage> messages = new ConcurrentLinkedDeque<>();
 
   @Override
-  public synchronized void saveMessage(ChatMessage message) {
+  public void saveMessage(ChatMessage message) {
     if (message == null) {
       LOGGER.error("message is null");
       throw new IllegalArgumentException("Cannot save null message");
