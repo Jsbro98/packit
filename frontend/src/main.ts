@@ -54,22 +54,19 @@ function createConnectionHandler(
   renderer: Renderer,
 ): OnConnectHandler {
   return async function (_: IFrame) {
-    client.subscribe("/topic/messages", (message) => {
-      const messageRecord: ChatMessage = JSON.parse(message.body);
-      renderer.appendToChat(messageRecord);
-    });
-
-    // FIXME: Buffer messages until messagehistory loads?
-
     const messageHistory = await withRetries<ChatMessage[]>(5, () => {
       return getMessageHistory();
     });
 
-    if (Error.isError(messageHistory)) {
-      return;
+    if (!Error.isError(messageHistory)) {
+      renderer.appendHistory(messageHistory);
     }
 
-    renderer.appendHistory(messageHistory);
+    // possibly buffer this
+    client.subscribe("/topic/messages", (message) => {
+      const messageRecord: ChatMessage = JSON.parse(message.body);
+      renderer.appendToChat(messageRecord);
+    });
   };
 }
 
