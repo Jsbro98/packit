@@ -51,3 +51,6 @@ application.properties
 
 # log files
 logs
+
+# scripts
+scripts
